@@ -107,73 +107,69 @@ export default function UserProfile({ problems = [], challenges = [], weeklyHabi
     ];
 
     return (
-        <div className="app-container" style={{ paddingBottom: '5rem' }}>
-            <header className="dashboard-header" style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <div className="title-area">
+        <div className="app-container" style={{ paddingBottom: '6rem' }}>
+            <header className="dashboard-header" style={{ marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
                     <motion.h1
-                        whileHover={{ x: 5 }}
-                        style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', color: 'var(--text-primary)' }}
+                        whileTap={{ x: 5 }}
+                        style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', color: 'var(--text-primary)', fontSize: '1.25rem', margin: 0 }}
                         onClick={() => navigate('/')}
                     >
-                        <ArrowLeft size={32} style={{ marginRight: '1rem', color: 'var(--accent-sage-dark)' }} />
+                        <ArrowLeft size={24} style={{ marginRight: '0.75rem', color: 'var(--accent-sage-dark)' }} />
                         Performance Lab
                     </motion.h1>
-                    <p>Quantifying your path to excellence.</p>
+                    <motion.button
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => supabase.auth.signOut()}
+                        style={{
+                            padding: '0.6rem 1rem', borderRadius: '12px', background: 'var(--bg-tertiary)',
+                            border: 'none', cursor: 'pointer', color: 'var(--text-secondary)',
+                            display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 800, fontSize: '0.75rem'
+                        }}
+                    >
+                        <LogOut size={14} />
+                        Logout
+                    </motion.button>
                 </div>
-
-                <motion.button
-                    whileHover={{ scale: 1.1, background: 'var(--tag-red-bg)', color: 'var(--tag-red-text)' }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => supabase.auth.signOut()}
-                    style={{
-                        padding: '0.75rem', borderRadius: '14px', background: 'var(--bg-tertiary)',
-                        border: 'none', cursor: 'pointer', color: 'var(--text-secondary)',
-                        display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontSize: '0.85rem'
-                    }}
-                >
-                    <LogOut size={18} />
-                    Logout
-                </motion.button>
+                <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 500 }}>Quantifying your path to excellence.</p>
             </header>
 
-            <div className="grid-container layout-2">
+            <div className="grid-container">
                 {/* Profile Card */}
                 <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="card" style={{
                     background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--accent-sage-light) 100%)',
-                    padding: '3rem',
+                    padding: '1.5rem',
                     border: '1px solid var(--border-glass)'
                 }}>
-                    <div style={{ display: 'flex', gap: '2.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center' }}>
                         <div style={{ position: 'relative' }}>
                             <div style={{
-                                width: '120px', height: '120px', background: 'var(--bg-primary)',
-                                borderRadius: '35px', display: 'flex', alignItems: 'center',
-                                justifyContent: 'center', boxShadow: '0 20px 40px rgba(91, 115, 88, 0.15)',
+                                width: '80px', height: '80px', background: 'var(--bg-primary)',
+                                borderRadius: '24px', display: 'flex', alignItems: 'center',
+                                justifyContent: 'center', boxShadow: '0 10px 20px rgba(91, 115, 88, 0.1)',
                                 border: '2px solid white'
                             }}>
-                                <User size={56} color="var(--accent-sage-dark)" />
+                                <User size={40} color="var(--accent-sage-dark)" />
                             </div>
-                            <motion.div
-                                whileHover={{ scale: 1.2, rotate: 10 }}
-                                style={{
-                                    position: 'absolute', bottom: '-5px', right: '-5px',
-                                    background: 'var(--accent-sage-dark)', color: 'white',
-                                    width: '44px', height: '44px', borderRadius: '14px',
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    fontWeight: 900, border: '4px solid var(--bg-primary)',
-                                    fontSize: '1.2rem', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-                                }}>
+                            <div style={{
+                                position: 'absolute', bottom: '-4px', right: '-4px',
+                                background: 'var(--accent-sage-dark)', color: 'white',
+                                width: '32px', height: '32px', borderRadius: '10px',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                fontWeight: 900, border: '3px solid var(--bg-primary)',
+                                fontSize: '0.9rem', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                            }}>
                                 {level}
-                            </motion.div>
+                            </div>
                         </div>
-                        <div style={{ flex: 1, minWidth: '200px' }}>
-                            <h2 style={{ fontSize: '2.5rem', margin: 0, fontFamily: 'Outfit, sans-serif', letterSpacing: '-0.03em' }}>Pioneer User</h2>
-                            <div style={{ marginTop: '1rem' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem', fontSize: '0.85rem', fontWeight: 800, color: 'var(--accent-sage-dark)' }}>
-                                    <span>ZEN ASCENSION: LVL {level}</span>
+                        <div style={{ flex: 1 }}>
+                            <h2 style={{ fontSize: '1.5rem', margin: 0, fontFamily: 'Outfit, sans-serif', letterSpacing: '-0.02em' }}>Pioneer User</h2>
+                            <div style={{ marginTop: '0.75rem' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.7rem', fontWeight: 800, color: 'var(--accent-sage-dark)' }}>
+                                    <span>LVL {level}</span>
                                     <span>{totalActivityScore} / {nextLevelScore} XP</span>
                                 </div>
-                                <div className="progress-track">
+                                <div className="progress-track" style={{ height: '6px' }}>
                                     <motion.div initial={{ width: 0 }} animate={{ width: `${levelProgress}%` }} className="progress-fill" />
                                 </div>
                             </div>
@@ -182,28 +178,27 @@ export default function UserProfile({ problems = [], challenges = [], weeklyHabi
                 </motion.div>
 
                 {/* Achievement Cabinet */}
-                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }} className="card" style={{ padding: '3rem' }}>
-                    <h2 className="section-title"><Award size={24} /> Awards Cabinet</h2>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '1.25rem', marginTop: '1rem' }}>
+                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }} className="card" style={{ padding: '1.5rem' }}>
+                    <h2 className="section-title" style={{ fontSize: '1.1rem' }}><Award size={20} /> Awards Cabinet</h2>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '0.75rem', marginTop: '0.5rem' }}>
                         {achievements.map(award => (
                             <motion.div
                                 key={award.id}
-                                whileHover={award.unlocked ? { y: -5, background: 'white', boxShadow: 'var(--shadow-premium)' } : {}}
+                                whileTap={award.unlocked ? { scale: 0.95 } : {}}
                                 style={{
-                                    padding: '1.25rem', background: award.unlocked ? 'var(--bg-primary)' : 'var(--bg-secondary)',
-                                    borderRadius: '20px', textAlign: 'center', border: award.unlocked ? '1px solid var(--accent-sage-light)' : '1px dashed var(--border-color)',
-                                    opacity: award.unlocked ? 1 : 0.6, transition: 'all 0.4s ease'
+                                    padding: '1rem 0.5rem', background: award.unlocked ? 'var(--bg-primary)' : 'var(--bg-secondary)',
+                                    borderRadius: '16px', textAlign: 'center', border: award.unlocked ? '1px solid var(--accent-sage-light)' : '1px dashed var(--border-color)',
+                                    opacity: award.unlocked ? 1 : 0.6
                                 }}>
                                 <div style={{
-                                    width: '44px', height: '44px', margin: '0 auto 0.75rem', borderRadius: '12px',
+                                    width: '36px', height: '36px', margin: '0 auto 0.5rem', borderRadius: '10px',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                                     background: award.unlocked ? 'var(--accent-sage-light)' : 'transparent',
                                     color: award.unlocked ? 'var(--accent-sage-dark)' : 'var(--text-muted)'
                                 }}>
-                                    {award.icon}
+                                    {React.cloneElement(award.icon, { size: 18 })}
                                 </div>
-                                <div style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-primary)' }}>{award.name}</div>
-                                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '0.25rem', fontWeight: 500 }}>{award.desc}</div>
+                                <div style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.2 }}>{award.name}</div>
                             </motion.div>
                         ))}
                     </div>
@@ -211,17 +206,15 @@ export default function UserProfile({ problems = [], challenges = [], weeklyHabi
             </div>
 
             {/* Heatmap Section */}
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="card" style={{ marginTop: '2.5rem', padding: '2.5rem' }}>
-                <h2 className="section-title"><Activity size={20} color="var(--accent-sage-dark)" /> Yearly Ritual Vibe</h2>
-                <div style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(13, 1fr)', gap: '6px' }}>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="card" style={{ marginTop: '1.25rem', padding: '1.5rem' }}>
+                <h2 className="section-title" style={{ fontSize: '1.1rem' }}><Activity size={18} color="var(--accent-sage-dark)" /> Yearly Ritual Vibe</h2>
+                <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(13, 1fr)', gap: '4px' }}>
                         {heatmapDays.map((d, i) => (
-                            <motion.div
+                            <div
                                 key={i}
-                                whileHover={{ scale: 1.2, zIndex: 1 }}
-                                title={`${d.date}: Level ${d.intensity}`}
                                 style={{
-                                    aspectRatio: '1 / 1', borderRadius: '4px',
+                                    aspectRatio: '1 / 1', borderRadius: '3px',
                                     background: d.intensity === 0 ? 'var(--bg-tertiary)' :
                                         d.intensity === 1 ? '#d1d9cf' :
                                             d.intensity === 2 ? '#9db099' :
@@ -230,12 +223,12 @@ export default function UserProfile({ problems = [], challenges = [], weeklyHabi
                             />
                         ))}
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.5rem', fontWeight: 600 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: '0.25rem', fontWeight: 700 }}>
                         <span>Last 3 Months</span>
                         <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
                             <span>Less</span>
-                            <div style={{ width: '10px', height: '10px', background: 'var(--bg-tertiary)', borderRadius: '2px' }} />
-                            <div style={{ width: '10px', height: '10px', background: '#6b8268', borderRadius: '2px' }} />
+                            <div style={{ width: '8px', height: '8px', background: 'var(--bg-tertiary)', borderRadius: '2px' }} />
+                            <div style={{ width: '8px', height: '8px', background: '#6b8268', borderRadius: '2px' }} />
                             <span>More</span>
                         </div>
                     </div>
@@ -243,22 +236,18 @@ export default function UserProfile({ problems = [], challenges = [], weeklyHabi
             </motion.div>
 
             {/* Chart Section */}
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="card" style={{ marginTop: '2.5rem', padding: '2.5rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-                    <h2 className="section-title" style={{ margin: 0 }}><Trophy size={20} /> Deep Analytics</h2>
-                    <div className="tabs" style={{ display: 'flex', background: 'var(--bg-tertiary)', padding: '0.3rem', borderRadius: '14px', gap: '0.3rem' }}>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="card" style={{ marginTop: '1.25rem', padding: '1.5rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem' }}>
+                    <h2 className="section-title" style={{ margin: 0, fontSize: '1.1rem' }}><Trophy size={18} /> Deep Analytics</h2>
+                    <div className="tab-strip">
                         {tabs.map(tab => (
-                            <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
-                                border: 'none', background: activeTab === tab.id ? 'var(--bg-card)' : 'transparent',
-                                padding: '0.5rem 1rem', borderRadius: '10px', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 800,
-                                color: activeTab === tab.id ? 'var(--text-primary)' : 'var(--text-muted)', boxShadow: activeTab === tab.id ? 'var(--shadow-sm)' : 'none'
-                            }}>
+                            <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`tab-btn ${activeTab === tab.id ? 'active' : ''}`}>
                                 {tab.label}
                             </button>
                         ))}
                     </div>
                 </div>
-                <div style={{ height: '350px' }}>
+                <div style={{ height: '300px' }}>
                     <AnimatePresence mode="wait">
                         <motion.div key={activeTab} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ width: '100%', height: '100%' }}>
                             <ResponsiveContainer>

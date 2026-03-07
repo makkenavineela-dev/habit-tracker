@@ -27,19 +27,19 @@ export default function ChallengeGallery({ challenges, setChallenges, previewOnl
     };
 
     return (
-        <div className="card" style={{ padding: '2.5rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
-                <h2 className="section-title" style={{ marginBottom: 0 }}>
-                    <Trophy size={24} color="var(--accent-earth)" />
-                    Active Challenges
+        <div className="card" style={{ padding: '1.25rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                <h2 className="section-title" style={{ marginBottom: 0, fontSize: '1.1rem' }}>
+                    <Trophy size={20} color="var(--accent-earth)" />
+                    Challenges
                 </h2>
                 {previewOnly && (
                     <div
                         className="manage-link"
                         onClick={() => navigate('/challenges')}
-                        style={{ color: 'var(--accent-earth-dark)', background: 'var(--accent-earth-light)', cursor: 'pointer' }}
+                        style={{ color: 'var(--accent-earth-dark)', background: 'var(--accent-earth-light)', cursor: 'pointer', fontSize: '0.75rem', padding: '4px 10px', borderRadius: '100px' }}
                     >
-                        All Challenges <ArrowRight size={14} style={{ marginLeft: 4 }} />
+                        More <ArrowRight size={12} style={{ marginLeft: 4 }} />
                     </div>
                 )}
             </div>
@@ -70,9 +70,9 @@ export default function ChallengeGallery({ challenges, setChallenges, previewOnl
                         )}
                         <div className="challenge-header">
                             <div>
-                                <h3 className="challenge-title">{challenge.title}</h3>
-                                <div className="challenge-dates">
-                                    <Calendar size={14} style={{ marginRight: '6px', opacity: 0.7 }} />
+                                <h3 className="challenge-title" style={{ fontSize: '1.1rem' }}>{challenge.title}</h3>
+                                <div className="challenge-dates" style={{ fontSize: '0.75rem' }}>
+                                    <Calendar size={12} style={{ marginRight: '4px', opacity: 0.7 }} />
                                     {challenge.startDate} — {challenge.endDate}
                                 </div>
                             </div>

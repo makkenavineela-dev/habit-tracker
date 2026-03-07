@@ -96,14 +96,25 @@ export default function DailyGrid({ habits = [], setHabits, updateGlobalProgress
     const selectedHabit = habits.find(h => h.id === selectedHabitId);
 
     return (
-        <div className="card daily-grid" style={{ overflow: 'visible' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-                <h2 className="section-title" style={{ marginBottom: 0 }}>
-                    <Sparkles size={22} className="text-sage" style={{ color: 'var(--accent-sage-dark)' }} />
-                    Daily Rituals
-                </h2>
-                <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-                    <div style={{ display: 'flex', gap: '0.4rem', background: 'var(--bg-tertiary)', padding: '0.4rem', borderRadius: '14px' }}>
+        <div className="card daily-grid" style={{ overflow: 'visible', padding: '1.25rem' }}>
+            <div className="daily-header-mobile">
+                <div className="title-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                    <h2 className="section-title" style={{ marginBottom: 0 }}>
+                        <Sparkles size={20} style={{ color: 'var(--accent-sage-dark)' }} />
+                        Daily Rituals
+                    </h2>
+                    <div style={{ display: 'flex', gap: '0.2rem', background: 'var(--bg-tertiary)', padding: '0.2rem', borderRadius: '10px' }}>
+                        <button onClick={() => setOffsetDays(offsetDays + 7)} className="cal-nav-btn" style={{ padding: '4px', background: 'none', border: 'none' }}>
+                            <ChevronLeft size={16} />
+                        </button>
+                        <button onClick={() => setOffsetDays(offsetDays - 7)} className="cal-nav-btn" style={{ padding: '4px', background: 'none', border: 'none' }}>
+                            <ChevronRight size={16} />
+                        </button>
+                    </div>
+                </div>
+
+                <div className="ritual-quick-actions" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', width: '100%' }}>
+                    <div className="template-row" style={{ display: 'flex', gap: '0.4rem', background: 'var(--bg-tertiary)', padding: '0.4rem', borderRadius: '14px', justifyContent: 'space-around' }}>
                         {[
                             { name: 'Water', icon: 'droplets' },
                             { name: 'Read', icon: 'book' },
@@ -119,36 +130,27 @@ export default function DailyGrid({ habits = [], setHabits, updateGlobalProgress
                                     border: 'none', background: 'transparent', padding: '0.4rem', borderRadius: '10px',
                                     cursor: 'pointer', color: 'var(--accent-sage-dark)', display: 'flex'
                                 }}
-                                title={`Add ${tmpl.name} `}
                             >
                                 <IconComponent iconName={tmpl.icon} size={16} />
                             </motion.button>
                         ))}
                     </div>
                     <motion.button
-                        whileHover={{ scale: 1.05, boxShadow: '0 8px 25px rgba(91, 115, 88, 0.2)' }}
-                        whileTap={{ scale: 0.95 }}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                         onClick={() => setIsAdding(!isAdding)}
                         className="establish-btn"
                         style={{
                             background: isAdding ? '#fff1f0' : 'var(--accent-sage-dark)',
                             color: isAdding ? '#c93d3d' : 'white',
-                            border: 'none', padding: '0.75rem 1.5rem', borderRadius: '100px',
-                            cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.6rem',
-                            fontSize: '0.9rem', fontWeight: 800, transition: 'all 0.4s'
+                            border: 'none', padding: '0.75rem', borderRadius: '12px',
+                            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem',
+                            fontSize: '0.9rem', fontWeight: 800, width: '100%'
                         }}
                     >
-                        {isAdding ? <X size={18} /> : <Plus size={18} />}
+                        {isAdding ? <X size={16} /> : <Plus size={16} />}
                         {isAdding ? 'Cancel' : 'New Ritual'}
                     </motion.button>
-                    <div style={{ display: 'flex', gap: '0.25rem', background: 'var(--bg-tertiary)', padding: '0.3rem', borderRadius: '12px' }}>
-                        <button onClick={() => setOffsetDays(offsetDays + 7)} className="cal-nav-btn" style={{ padding: '4px' }}>
-                            <ChevronLeft size={18} />
-                        </button>
-                        <button onClick={() => setOffsetDays(offsetDays - 7)} className="cal-nav-btn" style={{ padding: '4px' }}>
-                            <ChevronRight size={18} />
-                        </button>
-                    </div>
                 </div>
             </div>
 
@@ -178,9 +180,9 @@ export default function DailyGrid({ habits = [], setHabits, updateGlobalProgress
                             disabled={!newHabitName.trim()}
                             style={{
                                 background: 'var(--accent-sage-dark)', color: 'white', border: 'none',
-                                padding: '0 2rem', borderRadius: 'var(--radius-lg)', cursor: 'pointer',
+                                padding: '0 1.25rem', borderRadius: 'var(--radius-lg)', cursor: 'pointer',
                                 fontWeight: 800, opacity: newHabitName.trim() ? 1 : 0.5,
-                                textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.8rem'
+                                textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.75rem'
                             }}
                         >
                             Establish
@@ -270,7 +272,13 @@ export default function DailyGrid({ habits = [], setHabits, updateGlobalProgress
                                     />
                                 </div>
 
-                                <div className="days-grid">
+                                <div className="days-strip" style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    gap: '8px',
+                                    padding: '4px 0'
+                                }}>
                                     {daysToShow.map((dateObj, dIdx) => {
                                         const dStr = formatDate(dateObj);
                                         const isCompleted = completedDates.includes(dStr);
@@ -283,7 +291,7 @@ export default function DailyGrid({ habits = [], setHabits, updateGlobalProgress
                                                     fontWeight: isToday ? 800 : 600,
                                                     marginBottom: '0.25rem'
                                                 }}>
-                                                    {isToday ? 'Today' : getShortDayName(dateObj.getDay() === 0 ? 6 : dateObj.getDay() - 1)}
+                                                    {isToday ? 'T' : getShortDayName(dateObj.getDay() === 0 ? 6 : dateObj.getDay() - 1).substring(0, 1)}
                                                 </span>
                                                 <motion.div
                                                     whileHover={{ scale: 1.1, y: -4 }}

@@ -55,6 +55,7 @@ const PageTransition = ({ children }) => (
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     exit={{ opacity: 0, y: -20 }}
+    className="page-transition"
     transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
   >
     {children}
@@ -397,12 +398,44 @@ export default function App() {
           <Route path="/challenges" element={<ChallengeDetailPage challenges={challenges} setChallenges={setChallenges} onHaptic={triggerHaptic} />} />
         </Routes>
       </AnimatePresence>
+      <BottomNav />
       <AnimatePresence>
         {isTimerOpen && <ZenTimer onClose={() => setIsTimerOpen(false)} />}
       </AnimatePresence>
     </ErrorBoundary>
   );
 }
+
+const BottomNav = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const navItems = [
+    { label: 'Home', icon: <Sparkles size={20} />, path: '/' },
+    { label: 'Weekly', icon: <Activity size={20} />, path: '/weekly' },
+    { label: 'DSA', icon: <BookOpen size={20} />, path: '/dsa' },
+    { label: 'Arena', icon: <Trophy size={20} />, path: '/challenges' },
+    { label: 'Profile', icon: <User size={20} />, path: '/profile' }
+  ];
+
+  return (
+    <div className="bottom-nav">
+      {navItems.map((item) => {
+        const isActive = location.pathname === item.path;
+        return (
+          <div
+            key={item.label}
+            className={`nav-item ${isActive ? 'active' : ''}`}
+            onClick={() => navigate(item.path)}
+          >
+            <div className="nav-icon">{item.icon}</div>
+            <span className="nav-label">{item.label}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 
 
 function UpdatePassword({ onComplete }) {
@@ -468,41 +501,26 @@ function Dashboard({
     <PageTransition>
       <div className="app-container">
         <header className="dashboard-header">
-          <div className="title-area">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', marginBottom: '0.25rem' }}>
-              <motion.div
-                whileHover={{ rotate: 15, scale: 1.1 }}
-                style={{
-                  width: '48px', height: '48px', background: 'var(--accent-sage-dark)', borderRadius: '16px',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white',
-                  boxShadow: '0 12px 24px rgba(91, 115, 88, 0.25)'
-                }}>
-                <Sparkles size={24} />
-              </motion.div>
-              <h1 className="text-gradient" style={{ margin: 0, fontSize: '2.8rem', letterSpacing: '-0.03em' }}>Ritual Flow</h1>
-              <SyncIndicator status={syncStatus} />
-            </div>
-            <p style={{ fontWeight: 500, color: 'var(--text-secondary)', letterSpacing: '0.01em', opacity: 0.8 }}>Cultivating consistency, one small step at a time.</p>
+          <div className="title-row">
+            <h1 className="text-gradient dashboard-title">Ritual Flow</h1>
+            <SyncIndicator status={syncStatus} />
           </div>
-          <div style={{ display: 'flex', gap: '1rem' }}>
+          <div className="header-controls">
             <motion.div
-              whileHover={{ scale: 1.05, background: 'var(--accent-sage-light)', color: 'var(--accent-sage-dark)', rotate: [0, -2, 2, 0] }}
               whileTap={{ scale: 0.95 }}
               onClick={onOpenTimer}
               className={`user-profile-btn ${isTimerOpen ? 'pulse' : ''}`}
-              style={{ background: 'var(--bg-tertiary)', color: 'var(--text-secondary)', transition: 'all 0.4s ease' }}
             >
-              <Zap size={18} />
-              Focus Mode
+              <Zap size={16} />
+              Focus
             </motion.div>
             <motion.div
-              whileHover={{ scale: 1.05, background: 'var(--accent-sage-light)', borderColor: 'var(--accent-sage-dark)' }}
               whileTap={{ scale: 0.95 }}
               onClick={() => navigate('/profile')}
               className="user-profile-btn"
             >
-              <User size={18} />
-              User Profile
+              <User size={16} />
+              Profile
             </motion.div>
           </div>
         </header>
@@ -529,9 +547,13 @@ function Dashboard({
               previewOnly={true}
               onHaptic={triggerHaptic}
             />
-            <div onClick={() => navigate('/weekly')} className="manage-link" style={{ marginTop: '0.5rem', display: 'flex', justifyContent: 'flex-end' }}>
-              Manage Weekly Goals →
-            </div>
+            <motion.div
+              whileTap={{ scale: 0.98 }}
+              onClick={() => navigate('/weekly')}
+              className="manage-btn-mobile"
+            >
+              Manage Weekly Goals <Activity size={16} />
+            </motion.div>
           </motion.div>
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }}>
             <DSATracker
@@ -540,9 +562,13 @@ function Dashboard({
               previewOnly={true}
               onHaptic={triggerHaptic}
             />
-            <div onClick={() => navigate('/dsa')} className="manage-link" style={{ marginTop: '0.5rem', display: 'flex', justifyContent: 'flex-end' }}>
-              View Problem Log →
-            </div>
+            <motion.div
+              whileTap={{ scale: 0.98 }}
+              onClick={() => navigate('/dsa')}
+              className="manage-btn-mobile"
+            >
+              View Problem Log <BookOpen size={16} />
+            </motion.div>
           </motion.div>
         </div>
 

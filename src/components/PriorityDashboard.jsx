@@ -42,37 +42,37 @@ export default function PriorityDashboard({ globalProgress }) {
             animate="show"
             className="grid-container layout-2"
         >
-            <motion.div variants={item} className="card" style={{ padding: '2.5rem' }}>
+            <motion.div variants={item} className="card">
                 <h2 className="section-title">
-                    <TrendingUp size={22} />
-                    Weekly Performance
+                    <TrendingUp size={20} />
+                    Performance
                 </h2>
-                <div style={{ display: 'flex', alignItems: 'center', marginTop: '2.5rem', gap: '2.5rem', flexWrap: 'wrap' }}>
+                <div className="stat-row" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem', textAlign: 'center' }}>
                     <div
                         className="stat-circle"
-                        style={{ "--progress": `${globalProgress}%` }}
+                        style={{ "--progress": `${globalProgress}%`, width: '100px', height: '100px' }}
                     >
                         <motion.span
                             initial={{ scale: 0.5, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
-                            transition={{ delay: 0.5, type: "spring" }}
                             className="stat-value"
+                            style={{ fontSize: '1.5rem' }}
                         >
                             {globalProgress}%
                         </motion.span>
                     </div>
                     <div>
-                        <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.5rem', color: 'var(--text-primary)', fontFamily: 'Outfit, sans-serif' }}>
-                            {globalProgress > 70 ? "Excellent Work!" : globalProgress > 40 ? "Steady Progress" : "Keep Moving"}
+                        <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.25rem', color: 'var(--text-primary)', fontFamily: 'Outfit, sans-serif' }}>
+                            {globalProgress > 70 ? "Excellent!" : globalProgress > 40 ? "Steady Progress" : "Keep Moving"}
                         </h3>
-                        <p style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 600, lineHeight: 1.5 }}>
-                            You're on track to hit your weekly targets. Every small win counts.
+                        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: 500, lineHeight: 1.4 }}>
+                            You're on track to hit your targets.
                         </p>
                     </div>
                 </div>
             </motion.div>
 
-            <motion.div variants={item} className="card" style={{ display: 'flex', flexDirection: 'column', padding: '2.5rem' }}>
+            <motion.div variants={item} className="card priority-card" style={{ display: 'flex', flexDirection: 'column' }}>
                 <h2 className="section-title">
                     <Target size={22} />
                     Top Priorities

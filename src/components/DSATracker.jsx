@@ -55,108 +55,95 @@ export default function DSATracker({ problems, setProblems, previewOnly, onHapti
                 <table className="dsa-table">
                     <thead>
                         <tr>
-                            <th style={{ width: '60px', textAlign: 'center' }}>Solve</th>
+                            <th style={{ width: '40px', textAlign: 'center' }}>Solve</th>
                             <th>Problem</th>
-                            <th>Platform</th>
-                            <th>Complexity</th>
-                            <th>Domain</th>
-                            <th style={{ textAlign: 'right' }}>Logged</th>
-                            {!previewOnly && <th style={{ width: '60px' }}></th>}
+                            <th style={{ width: '100px', textAlign: 'right' }}>Status</th>
+                            {!previewOnly && <th style={{ width: '40px' }}></th>}
                         </tr>
                     </thead>
-                    <motion.tbody
-                        variants={container}
-                        initial="hidden"
-                        animate="show"
-                    >
+                    <motion.tbody variants={container} initial="hidden" animate="show">
                         <AnimatePresence mode="popLayout">
                             {(displayProblems || []).map((problem) => (
-                                <motion.tr
-                                    layout
-                                    variants={item}
-                                    key={problem.id}
-                                >
+                                <motion.tr layout variants={item} key={problem.id}>
                                     <td style={{ textAlign: 'center' }} onClick={e => e.stopPropagation()}>
-                                        <input
-                                            type="checkbox"
-                                            className="custom-checkbox"
-                                            checked={problem.status === "Done"}
-                                            onChange={() => toggleStatus(problem.id)}
-                                        />
+                                        <input type="checkbox" className="custom-checkbox" checked={problem.status === "Done"} onChange={() => toggleStatus(problem.id)} />
                                     </td>
                                     <td>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                            <div className="habit-icon" style={{ width: '28px', height: '28px' }}>
-                                                <Code2 size={14} />
-                                            </div>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                             {problem.platform === 'LeetCode' ? (
-                                                <motion.a
-                                                    href={getLeetCodeUrl(problem.name)}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    whileHover={{ x: 5, color: 'var(--accent-sage-dark)' }}
-                                                    style={{
-                                                        fontWeight: 700,
-                                                        color: 'var(--text-primary)',
-                                                        fontFamily: 'Outfit, sans-serif',
-                                                        textDecoration: 'none',
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        gap: '0.4rem'
-                                                    }}
-                                                >
+                                                <a href={getLeetCodeUrl(problem.name)} target="_blank" rel="noopener noreferrer" style={{ fontWeight: 700, color: 'var(--text-primary)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.95rem' }}>
                                                     {problem.number ? `${problem.number}. ` : ''}{problem.name}
-                                                    <ExternalLink size={12} opacity={0.5} />
-                                                </motion.a>
+                                                    <ExternalLink size={10} opacity={0.5} />
+                                                </a>
                                             ) : (
-                                                <span style={{ fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'Outfit, sans-serif' }}>
+                                                <span style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.95rem' }}>
                                                     {problem.number ? `${problem.number}. ` : ''}{problem.name}
                                                 </span>
                                             )}
+                                            <span className={`tag ${problem.difficulty ? problem.difficulty.toLowerCase() : 'medium'}`} style={{ fontSize: '0.55rem', padding: '1px 6px', marginLeft: '0.5rem' }}>{problem.difficulty}</span>
                                         </div>
                                     </td>
-                                    <td style={{ fontWeight: 600, color: 'var(--text-secondary)', fontSize: '0.9rem' }}>{problem.platform}</td>
-                                    <td>
-                                        <span className={`tag ${problem.difficulty ? problem.difficulty.toLowerCase() : 'medium'}`}>
-                                            {problem.difficulty}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <span className="tag pending" style={{ background: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}>
-                                            {problem.topic}
-                                        </span>
-                                    </td>
-                                    <td style={{ textAlign: 'right', color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 700 }}>
-                                        {problem.dateAdded}
+                                    <td style={{ textAlign: 'right', color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 800 }}>
+                                        {problem.status === 'Done' ? 'DONE' : 'PENDING'}
                                     </td>
                                     {!previewOnly && (
                                         <td style={{ textAlign: 'center' }}>
-                                            <motion.button
-                                                whileHover={{ scale: 1.1, color: 'var(--tag-red-text)' }}
-                                                onClick={(e) => { e.stopPropagation(); deleteProblem(problem.id); }}
-                                                style={{
-                                                    background: 'none', border: 'none', cursor: 'pointer',
-                                                    color: 'var(--text-muted)', padding: '4px'
-                                                }}
-                                            >
-                                                <Trash2 size={16} />
-                                            </motion.button>
+                                            <button onClick={(e) => { e.stopPropagation(); deleteProblem(problem.id); }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: '4px' }}><Trash2 size={16} /></button>
                                         </td>
                                     )}
                                 </motion.tr>
                             ))}
                         </AnimatePresence>
-                        {(!displayProblems || displayProblems.length === 0) && (
-                            <tr>
-                                <td colSpan={previewOnly ? "6" : "7"} style={{ textAlign: 'center', padding: '4rem' }}>
-                                    <Sparkles size={32} style={{ marginBottom: '1rem', opacity: 0.1, margin: '0 auto' }} />
-                                    <p style={{ color: 'var(--text-muted)', fontWeight: 600 }}>No problems tracked yet.</p>
-                                </td>
-                            </tr>
-                        )}
                     </motion.tbody>
                 </table>
             </div>
+
+            <div className="dsa-mobile-cards">
+                <AnimatePresence mode="popLayout">
+                    {(displayProblems || []).map((problem) => (
+                        <motion.div layout variants={item} key={problem.id} className="dsa-mobile-card">
+                            <input
+                                type="checkbox"
+                                className="custom-checkbox"
+                                checked={problem.status === "Done"}
+                                onChange={() => toggleStatus(problem.id)}
+                                style={{ marginTop: '0.2rem' }}
+                            />
+                            <div className="card-content">
+                                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem' }}>
+                                    {problem.platform === 'LeetCode' ? (
+                                        <a href={getLeetCodeUrl(problem.name)} target="_blank" rel="noopener noreferrer" style={{ fontWeight: 700, color: 'var(--text-primary)', textDecoration: 'none', fontSize: '0.95rem', lineHeight: 1.3 }}>
+                                            {problem.number ? `${problem.number}. ` : ''}{problem.name}
+                                            <ExternalLink size={10} style={{ marginLeft: 4, opacity: 0.5 }} />
+                                        </a>
+                                    ) : (
+                                        <span style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.95rem', lineHeight: 1.3 }}>
+                                            {problem.number ? `${problem.number}. ` : ''}{problem.name}
+                                        </span>
+                                    )}
+                                    {!previewOnly && (
+                                        <button onClick={() => deleteProblem(problem.id)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', padding: '2px' }}>
+                                            <Trash2 size={14} />
+                                        </button>
+                                    )}
+                                </div>
+                                <div className="card-meta" style={{ marginTop: '0.4rem' }}>
+                                    <span className={`tag ${problem.difficulty ? problem.difficulty.toLowerCase() : 'medium'}`} style={{ fontSize: '0.55rem', padding: '1px 6px' }}>
+                                        {problem.difficulty}
+                                    </span>
+                                </div>
+                            </div>
+                        </motion.div>
+                    ))}
+                </AnimatePresence>
+            </div>
+
+            {(!displayProblems || displayProblems.length === 0) && (
+                <div style={{ textAlign: 'center', padding: '4rem' }}>
+                    <Sparkles size={32} style={{ marginBottom: '1rem', opacity: 0.1, margin: '0 auto' }} />
+                    <p style={{ color: 'var(--text-muted)', fontWeight: 600 }}>No problems tracked yet.</p>
+                </div>
+            )}
         </div>
     );
 }
