@@ -5,9 +5,9 @@ import { Database, Code2, Trash2, ArrowRight, Sparkles, ExternalLink } from 'luc
 export default function DSATracker({ problems, setProblems, previewOnly, onHaptic }) {
     const getLeetCodeUrl = (name) => {
         const slug = name.toLowerCase()
-            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/[^a-z0-9\s]/g, '') // remove special chars but keep spaces
             .trim()
-            .replace(/\s+/g, '-');
+            .replace(/\s+/g, '-'); // replace one or more spaces with a single hyphen
         return `https://leetcode.com/problems/${slug}/`;
     };
 

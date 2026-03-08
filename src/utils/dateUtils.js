@@ -78,12 +78,13 @@ export const calculateStreak = (completedDates = []) => {
     // If today is not completed and yesterday is not completed, streak is 0
     if (sortedDates[0] !== today && sortedDates[0] !== yStr) return 0;
 
+    const dateSet = new Set(completedDates);
     let streak = 0;
     let checkDate = new Date(sortedDates[0]);
 
-    for (let i = 0; i < sortedDates.length; i++) {
+    while (true) {
         const dStr = formatDate(checkDate);
-        if (sortedDates.includes(dStr)) {
+        if (dateSet.has(dStr)) {
             streak++;
             checkDate.setDate(checkDate.getDate() - 1);
         } else {

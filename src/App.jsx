@@ -19,6 +19,7 @@ import { StatusBar, Style } from '@capacitor/status-bar';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { supabase } from './lib/supabase';
 import Auth from './components/Auth';
+import useHabitStore from './store/useHabitStore';
 import './App.css';
 
 // Native Bridge Helper
@@ -80,7 +81,7 @@ class ErrorBoundary extends React.Component {
         <div style={{ padding: '2rem', background: '#fff1f0', color: '#c93d3d', minHeight: '100vh', fontFamily: 'monospace' }}>
           <h2>Something went wrong in Ritual Flow.</h2>
           <pre>{this.state.error?.toString()}</pre>
-          <button onClick={() => { localStorage.clear(); window.location.reload(); }} style={{ padding: '0.5rem 1rem', background: '#c93d3d', color: 'white', border: 'none', borderRadius: '4px' }}>
+          <button onClick={() => { if (confirm("This will delete all your local habit data. Are you sure?")) { localStorage.clear(); window.location.reload(); } }} style={{ padding: '0.5rem 1rem', background: '#c93d3d', color: 'white', border: 'none', borderRadius: '4px' }}>
             Clear Local Data & Refresh
           </button>
         </div>
@@ -248,29 +249,48 @@ export default function App() {
   };
 
   const [globalProgress, setGlobalProgress] = useState(0);
-  const [problems, setProblems] = useState(() => loadState('problems', defaultProblems));
-  const [challenges, setChallenges] = useState(() => loadState('challenges', defaultChallenges));
-  const [weeklyHabits, setWeeklyHabits] = useState(() => loadState('weeklyHabits', defaultWeekly));
-  const [dailyHabits, setDailyHabits] = useState(() => loadState('dailyHabits', defaultDaily));
   const [syncStatus, setSyncStatus] = useState('idle'); // 'idle', 'syncing', 'saved', 'error'
+  const [isCloudLoaded, setIsCloudLoaded] = useState(false);
 
-  // Auto-Save & Sync Effect
+  const {
+    dailyHabits, setDailyHabits,
+    weeklyHabits, setWeeklyHabits,
+    challenges, setChallenges,
+    problems, setProblems,
+    addDailyHabit, deleteDailyHabit, updateDailyHabit
+  } = useHabitStore();
+
+  // Load from Cloud once on session change
   useEffect(() => {
-    localStorage.setItem('problems', JSON.stringify(problems));
-    localStorage.setItem('challenges', JSON.stringify(challenges));
-    localStorage.setItem('weeklyHabits', JSON.stringify(weeklyHabits));
-    localStorage.setItem('dailyHabits', JSON.stringify(dailyHabits));
+    if (session?.user?.id && !isCloudLoaded) {
+      const loadFromCloud = async () => {
+        const { data, error } = await supabase
+          .from('user_sync')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .single();
 
-    // Cloud Sync
-    if (session?.user?.id) {
-      // Cleanup broken DSA entries
-      const cleanedProblems = problems.filter(p => !p.name.includes("Unknown Problem"));
-      if (cleanedProblems.length !== problems.length) {
-        setProblems(cleanedProblems);
-        return; // Next effect run will handle the sync
-      }
+        if (data && !error) {
+          if (data.problems) setProblems(data.problems);
+          if (data.challenges) setChallenges(data.challenges);
+          if (data.weeklyHabits) setWeeklyHabits(data.weeklyHabits);
+          if (data.dailyHabits) setDailyHabits(data.dailyHabits);
+        }
+        setIsCloudLoaded(true);
+      };
+      loadFromCloud();
+    } else if (!session) {
+      setIsCloudLoaded(false);
+    }
+  }, [session, isCloudLoaded]);
 
-      const syncToCloud = async () => {
+  // Debounced Auto-Save & Sync Effect
+  useEffect(() => {
+    if (!isCloudLoaded) return; // Prevent overwriting cloud data before it's loaded
+
+    const syncTimeout = setTimeout(async () => {
+      // Cloud Sync
+      if (session?.user?.id) {
         setSyncStatus('syncing');
         const payload = {
           user_id: session.user.id,
@@ -290,34 +310,13 @@ export default function App() {
           setSyncStatus('error');
         } else {
           setSyncStatus('saved');
-          // Reset to idle after a few seconds
           setTimeout(() => setSyncStatus('idle'), 3000);
         }
-      };
-      syncToCloud();
-    }
-  }, [problems, challenges, weeklyHabits, dailyHabits, session]);
+      }
+    }, 2000); // 2 second debounce
 
-  // Initial Cloud Load
-  useEffect(() => {
-    if (session?.user?.id) {
-      const loadFromCloud = async () => {
-        const { data, error } = await supabase
-          .from('user_sync')
-          .select('*')
-          .eq('user_id', session.user.id)
-          .single();
-
-        if (data && !error) {
-          if (data.problems) setProblems(data.problems);
-          if (data.challenges) setChallenges(data.challenges);
-          if (data.weeklyHabits) setWeeklyHabits(data.weeklyHabits);
-          if (data.dailyHabits) setDailyHabits(data.dailyHabits);
-        }
-      };
-      loadFromCloud();
-    }
-  }, [session]);
+    return () => clearTimeout(syncTimeout);
+  }, [problems, challenges, weeklyHabits, dailyHabits, session, isCloudLoaded]);
 
   // Check for 100% daily completion to fire confetti
   useEffect(() => {
@@ -335,13 +334,9 @@ export default function App() {
     }
   }, [dailyHabits, globalProgress]);
 
-  const addHabit = (name, icon = 'sparkles') => {
-    const newHabit = { id: Date.now(), name, icon, completedDates: [] };
-    setDailyHabits([...dailyHabits, newHabit]);
-  };
-
-  const deleteHabit = (id) => setDailyHabits(dailyHabits.filter(h => h.id !== id));
-  const updateHabit = (id, newName) => setDailyHabits(dailyHabits.map(h => h.id === id ? { ...h, name: newName } : h));
+  const addHabit = (name, icon = 'sparkles') => addDailyHabit(name, icon);
+  const deleteHabit = (id) => deleteDailyHabit(id);
+  const updateHabit = (id, newName) => updateDailyHabit(id, newName);
 
   if (isInitializing) {
     return (

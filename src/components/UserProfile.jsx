@@ -9,6 +9,17 @@ import { getPastNDays, getShortDayName, formatDate, calculateStreak } from '../u
 export default function UserProfile({ problems = [], challenges = [], weeklyHabits = [], dailyHabits = [] }) {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('daily');
+    const [userIdent, setUserIdent] = useState('Ritual Pioneer');
+
+    React.useEffect(() => {
+        const fetchUser = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                setUserIdent(user.user_metadata?.display_name || user.email?.split('@')[0] || 'Ritual Pioneer');
+            }
+        };
+        fetchUser();
+    }, []);
 
     const last7Days = getPastNDays(7);
 
@@ -163,7 +174,7 @@ export default function UserProfile({ problems = [], challenges = [], weeklyHabi
                             </div>
                         </div>
                         <div style={{ flex: 1 }}>
-                            <h2 style={{ fontSize: '1.5rem', margin: 0, fontFamily: 'Outfit, sans-serif', letterSpacing: '-0.02em' }}>Pioneer User</h2>
+                            <h2 style={{ fontSize: '1.5rem', margin: 0, fontFamily: 'Outfit, sans-serif', letterSpacing: '-0.02em', textTransform: 'capitalize' }}>{userIdent}</h2>
                             <div style={{ marginTop: '0.75rem' }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.7rem', fontWeight: 800, color: 'var(--accent-sage-dark)' }}>
                                     <span>LVL {level}</span>

@@ -25,15 +25,20 @@ export default function WeeklyTracker({ weeklyHabits = [], setWeeklyHabits, prev
 
     const toggleCheck = (hIdx, cIdx) => {
         if (onHaptic) onHaptic();
-        let newChecks = weeklyHabits[hIdx].checks;
-        if (newChecks === cIdx + 1) {
-            newChecks = cIdx; // uncheck
-        } else {
-            newChecks = cIdx + 1; // check up to this point
-        }
 
         const newHabits = [...weeklyHabits];
-        newHabits[hIdx].checks = newChecks;
+        const habit = { ...newHabits[hIdx] };
+
+        // Ensure checks is an array
+        if (!Array.isArray(habit.checks)) {
+            habit.checks = Array(habit.target).fill(false);
+        }
+
+        const newChecks = [...habit.checks];
+        newChecks[cIdx] = !newChecks[cIdx];
+        habit.checks = newChecks;
+
+        newHabits[hIdx] = habit;
         setWeeklyHabits(newHabits);
     };
 
@@ -80,7 +85,10 @@ export default function WeeklyTracker({ weeklyHabits = [], setWeeklyHabits, prev
             >
                 {(displayHabits || []).map((habit, displayIdx) => {
                     const hIdx = weeklyHabits.findIndex(h => h.id === habit.id);
-                    const progress = Math.round((habit.checks / habit.target) * 100);
+                    const completedCount = Array.isArray(habit.checks)
+                        ? habit.checks.filter(c => c).length
+                        : (typeof habit.checks === 'number' ? habit.checks : 0);
+                    const progress = Math.round((completedCount / habit.target) * 100);
                     return (
                         <motion.div
                             variants={item}
@@ -128,7 +136,7 @@ export default function WeeklyTracker({ weeklyHabits = [], setWeeklyHabits, prev
                                         <input
                                             type="checkbox"
                                             className="custom-checkbox"
-                                            checked={cIdx < habit.checks}
+                                            checked={Array.isArray(habit.checks) ? !!habit.checks[cIdx] : cIdx < habit.checks}
                                             onChange={() => toggleCheck(hIdx, cIdx)}
                                         />
                                     </div>

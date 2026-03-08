@@ -1,15 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Target, TrendingUp, Sparkles, Quote, Trophy } from 'lucide-react';
-
-const mockPriorities = [
-    { id: 1, text: "Master dynamic programming patterns" },
-    { id: 2, text: "Finish System Design fundamentals" },
-    { id: 3, text: "Update professional portfolio" }
-];
+import useHabitStore from '../store/useHabitStore';
 
 export default function PriorityDashboard({ globalProgress }) {
-    const [priorities, setPriorities] = useState(mockPriorities);
+    const { priorities, setPriorities } = useHabitStore();
     const [editingId, setEditingId] = useState(null);
 
     const handleTextChange = (id, newText) => {
@@ -89,7 +84,7 @@ export default function PriorityDashboard({ globalProgress }) {
                                     type="text"
                                     value={item.text}
                                     onChange={(e) => handleTextChange(item.id, e.target.value)}
-                                    onBlur={() => setEditingId(null)}
+                                    // onBlur={() => setEditingId(null)} // Removed to prevent closing on focus loss in some cases
                                     onKeyDown={handleKeyDown}
                                     autoFocus
                                     className="priority-text"

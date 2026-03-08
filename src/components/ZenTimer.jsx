@@ -181,7 +181,7 @@ export default function ZenTimer({ onClose }) {
                     <button
                         key={m.id}
                         className="timer-mode-btn"
-                        onClick={() => { setMode(m.id); setTimeLeft(m.time); setIsActive(false); }}
+                        onClick={() => { setMode(m.id); setTimeLeft(m.time); setIsActive(false); if (audioRef.current) audioRef.current.pause(); }}
                         style={{
                             border: 'none',
                             background: mode === m.id ? 'var(--bg-card)' : 'transparent',

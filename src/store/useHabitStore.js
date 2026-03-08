@@ -1,9 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { formatDate } from '../utils/dateUtils';
 
-// This Zustand store extracts state management from App.jsx
-// It natively supports local storage persistence (Offline-First)
 const useHabitStore = create(
     persist(
         (set) => ({
@@ -11,6 +8,11 @@ const useHabitStore = create(
             weeklyHabits: [],
             challenges: [],
             problems: [],
+            priorities: [
+                { id: 1, text: "Master dynamic programming patterns" },
+                { id: 2, text: "Finish System Design fundamentals" },
+                { id: 3, text: "Update professional portfolio" }
+            ],
 
             setDailyHabits: (habits) => set({ dailyHabits: habits }),
             addDailyHabit: (name, icon = 'sparkles') => set((state) => ({
@@ -26,9 +28,10 @@ const useHabitStore = create(
             setWeeklyHabits: (habits) => set({ weeklyHabits: habits }),
             setChallenges: (challenges) => set({ challenges }),
             setProblems: (problems) => set({ problems }),
+            setPriorities: (priorities) => set({ priorities }),
         }),
         {
-            name: 'habit-storage', // unique name for local storage key
+            name: 'habit-storage',
         }
     )
 );
