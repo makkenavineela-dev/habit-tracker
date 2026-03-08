@@ -29,9 +29,10 @@ export default function WeeklyTracker({ weeklyHabits = [], setWeeklyHabits, prev
         const newHabits = [...weeklyHabits];
         const habit = { ...newHabits[hIdx] };
 
-        // Ensure checks is an array
+        // Ensure checks is an array (Legacy migration)
         if (!Array.isArray(habit.checks)) {
-            habit.checks = Array(habit.target).fill(false);
+            const count = typeof habit.checks === 'number' ? habit.checks : 0;
+            habit.checks = Array(habit.target).fill(false).map((_, i) => i < count);
         }
 
         const newChecks = [...habit.checks];

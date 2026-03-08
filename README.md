@@ -1,42 +1,65 @@
-# Habit Tracker
+# Ritual Flow — Habit Tracker
 
-A modern, mobile-first daily habit tracker designed to help you build and maintain positive routines. Built with a robust full-stack architecture, it provides an intuitive interface, offline capabilities, and cross-platform native support.
+A modern, high-performance habit tracker built for peak consistency. Ritual Flow combines beautiful aesthetics with robust data management, allowing you to track daily rituals, weekly focus areas, and DSA progress.
 
-## Features (v1)
-- **Daily Habit Logging**: Create, track, and manage your daily habits.
-- **Offline-First Support**: Uses local storage via Zustand to ensure reliability without a persistent internet connection.
-- **Push Reminders**: Native push notifications via Capacitor to keep you on top of your daily goals.
-- **Progress Tracking**: Visualize your streaks and progress via interactive Recharts integrations.
-- **Supabase Cloud Sync**: Optionally sync your habits securely across devices using Supabase.
-- **Cross-Platform Native**: Runs beautifully on both Android and iOS inside a performant Capacitor webview.
+## 🚀 Quick Start
 
-## Architecture & Tech Stack
-- **Frontend Framework**: React 19 + Vite
-- **Language**: TypeScript (in progress migration)
-- **Styling & UI**: Tailwind/CSS, Framer Motion, Lucide React
-- **State Management**: Zustand
-- **Native Bridge**: Capacitor (iOS & Android)
-- **Backend/BaaS**: Supabase
-
-## Setup & Running Locally
-
-1. **Environment Configuration**
-   - Copy `.env.example` to `.env`.
-   - Update `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in `.env` with your project credentials.
-
-2. **Install Dependencies**
+1. **Clone & Install**
    ```bash
    npm install
    ```
 
-2. **Run Web Dev Server**
+2. **Environment Setup**
+   Copy the example environment file and fill in your Supabase credentials.
+   ```bash
+   cp .env.example .env
+   ```
+
+3. **Database Setup (Supabase)**
+   Run the following SQL in your Supabase SQL Editor to initialize the sync table:
+   
+   ```sql
+   -- Create sync table
+   create table public.user_sync (
+     id uuid references auth.users not null primary key,
+     data jsonb not null default '{}'::jsonb,
+     updated_at timestamp with time zone default timezone('utc'::text, now()) not null
+   );
+
+   -- Enable Row Level Security
+   alter table public.user_sync enable row level security;
+
+   -- Create RLS Policies
+   create policy "Users can update their own sync data" 
+     on public.user_sync for update 
+     using (auth.uid() = id);
+
+   create policy "Users can insert their own sync data" 
+     on public.user_sync for insert 
+     with check (auth.uid() = id);
+
+   create policy "Users can view their own sync data" 
+     on public.user_sync for select 
+     using (auth.uid() = id);
+   ```
+
+4. **Launch**
    ```bash
    npm run dev
    ```
-   Open `http://localhost:5173` to test the PWA version in your browser.
 
-## Native Development (iOS & Android)
-This app uses Capacitor to compile the React web app into native iOS and Android binaries.
+## 🛠 Tech Stack
+
+| Layer | Technology |
+| :--- | :--- |
+| **Framework** | React 19 + Vite |
+| **Styling** | Vanilla CSS + Framer Motion |
+| **State** | Zustand + Persist Middleware |
+| **Database** | Supabase (PostgreSQL + Auth) |
+| **Mobile** | Capacitor (iOS & Android) |
+| **Testing** | Vitest + React Testing Library |
+
+## 📱 Mobile Native Build
 
 ### Android
 ```bash
@@ -51,13 +74,15 @@ npm run build
 npx cap sync ios
 npx cap open ios
 ```
-*(Requires Xcode on macOS)*
 
-## Testing
-We use Vitest and React Testing Library for verifying our components and state handlers.
+## 🧪 Testing
+
+We carry a comprehensive test suite covering the store, utilities, and complex UI logic.
 ```bash
 npm run test
 ```
 
-## Contributing
-Please follow conventional commits and ensure you have run `npm run lint` and `npm run test` before opening any PRs.
+## 🔐 Security
+- **Cloud Sync**: All data is stored in LocalStorage first and debounced to Supabase.
+- **Privacy**: RLS (Row Level Security) ensures only YOU can access your habit data.
+- **Safe Recovery**: Targeted storage clearing prevents data loss during minor corruptions.
