@@ -3,11 +3,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Database, Code2, Trash2, ArrowRight, Sparkles, ExternalLink } from 'lucide-react';
 
 export default function DSATracker({ problems, setProblems, previewOnly, onHaptic }) {
-    const getLeetCodeUrl = (name) => {
-        const slug = name.toLowerCase()
-            .replace(/[^a-z0-9\s]/g, '') // remove special chars but keep spaces
+    const getLeetCodeUrl = (problem) => {
+        if (problem.slug) return `https://leetcode.com/problems/${problem.slug}/`;
+
+        // Fallback for legacy items
+        const slug = problem.name.toLowerCase()
+            .replace(/[^a-z0-9\s-]/g, '')
             .trim()
-            .replace(/\s+/g, '-'); // replace one or more spaces with a single hyphen
+            .replace(/\s+/g, '-');
         return `https://leetcode.com/problems/${slug}/`;
     };
 
@@ -71,7 +74,7 @@ export default function DSATracker({ problems, setProblems, previewOnly, onHapti
                                     <td>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                             {problem.platform === 'LeetCode' ? (
-                                                <a href={getLeetCodeUrl(problem.name)} target="_blank" rel="noopener noreferrer" style={{ fontWeight: 700, color: 'var(--text-primary)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.95rem' }}>
+                                                <a href={getLeetCodeUrl(problem)} target="_blank" rel="noopener noreferrer" style={{ fontWeight: 700, color: 'var(--text-primary)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.95rem' }}>
                                                     {problem.number ? `${problem.number}. ` : ''}{problem.name}
                                                     <ExternalLink size={10} opacity={0.5} />
                                                 </a>
@@ -112,7 +115,7 @@ export default function DSATracker({ problems, setProblems, previewOnly, onHapti
                             <div className="card-content">
                                 <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem' }}>
                                     {problem.platform === 'LeetCode' ? (
-                                        <a href={getLeetCodeUrl(problem.name)} target="_blank" rel="noopener noreferrer" style={{ fontWeight: 700, color: 'var(--text-primary)', textDecoration: 'none', fontSize: '0.95rem', lineHeight: 1.3 }}>
+                                        <a href={getLeetCodeUrl(problem)} target="_blank" rel="noopener noreferrer" style={{ fontWeight: 700, color: 'var(--text-primary)', textDecoration: 'none', fontSize: '0.95rem', lineHeight: 1.3 }}>
                                             {problem.number ? `${problem.number}. ` : ''}{problem.name}
                                             <ExternalLink size={10} style={{ marginLeft: 4, opacity: 0.5 }} />
                                         </a>

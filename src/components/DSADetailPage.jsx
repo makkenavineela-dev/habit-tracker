@@ -22,10 +22,19 @@ export default function DSADetailPage({ problems, setProblems, onHaptic }) {
         const problemNumStr = String(questionNumber).trim();
         const apiData = leetcodeData[problemNumStr];
 
+        // Generate actual LeetCode slug from title
+        const generateSlug = (title) => {
+            return title.toLowerCase()
+                .replace(/[^a-z0-9\s-]/g, '') // remove special chars except hyphens
+                .trim()
+                .replace(/\s+/g, '-'); // spaces to hyphens
+        };
+
         const newProblem = {
             id: Date.now(),
             number: problemNumStr,
             name: apiData ? apiData.title : `Unknown Problem #${problemNumStr}`,
+            slug: apiData ? generateSlug(apiData.title) : generateSlug(`Unknown Problem ${problemNumStr}`),
             platform: "LeetCode",
             difficulty: apiData ? apiData.difficulty : "Medium",
             topic: topic || "Algorithmic Practice",

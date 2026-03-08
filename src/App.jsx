@@ -81,8 +81,14 @@ class ErrorBoundary extends React.Component {
         <div style={{ padding: '2rem', background: '#fff1f0', color: '#c93d3d', minHeight: '100vh', fontFamily: 'monospace' }}>
           <h2>Something went wrong in Ritual Flow.</h2>
           <pre>{this.state.error?.toString()}</pre>
-          <button onClick={() => { if (confirm("This will delete all your local habit data. Are you sure?")) { localStorage.clear(); window.location.reload(); } }} style={{ padding: '0.5rem 1rem', background: '#c93d3d', color: 'white', border: 'none', borderRadius: '4px' }}>
-            Clear Local Data & Refresh
+          <button onClick={() => {
+            const msg = `CRITICAL ERROR: ${this.state.error?.message || 'Unknown error'}\n\nThis might be caused by corrupted local data. Would you like to clear your local habit storage and reload? (Cloud data will remain safe if synced).`;
+            if (confirm(msg)) {
+              localStorage.removeItem('habit-storage');
+              window.location.reload();
+            }
+          }} style={{ padding: '0.6rem 1.2rem', background: '#c93d3d', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 12px rgba(201, 61, 61, 0.2)' }}>
+            Attempt Recovery (Clear Local Store)
           </button>
         </div>
       );

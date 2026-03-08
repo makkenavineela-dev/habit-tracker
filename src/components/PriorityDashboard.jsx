@@ -84,7 +84,7 @@ export default function PriorityDashboard({ globalProgress }) {
                                     type="text"
                                     value={item.text}
                                     onChange={(e) => handleTextChange(item.id, e.target.value)}
-                                    // onBlur={() => setEditingId(null)} // Removed to prevent closing on focus loss in some cases
+                                    onBlur={() => setEditingId(null)}
                                     onKeyDown={handleKeyDown}
                                     autoFocus
                                     className="priority-text"

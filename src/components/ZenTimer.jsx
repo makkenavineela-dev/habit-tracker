@@ -8,6 +8,7 @@ export default function ZenTimer({ onClose }) {
     const [mode, setMode] = useState('focus'); // focus, short, long
     const [ambient, setAmbient] = useState(null); // wind, waves, birds
     const audioRef = React.useRef(null);
+    const intervalRef = React.useRef(null);
 
     const ambientSounds = {
         wind: 'https://assets.mixkit.co/sfx/preview/mixkit-wind-howl-at-the-window-1166.mp3',
@@ -26,13 +27,12 @@ export default function ZenTimer({ onClose }) {
 
     // Timer Logic
     useEffect(() => {
-        let interval = null;
         if (isActive && timeLeft > 0) {
-            interval = setInterval(() => {
+            intervalRef.current = setInterval(() => {
                 setTimeLeft((prev) => prev - 1);
             }, 1000);
         } else if (timeLeft === 0) {
-            clearInterval(interval);
+            clearInterval(intervalRef.current);
             setIsActive(false);
             if (audioRef.current) audioRef.current.pause();
             // In a real app, we'd fire a notification here
@@ -40,12 +40,13 @@ export default function ZenTimer({ onClose }) {
                 new Notification('Focus Session Complete!', { body: 'Time to take a breath.' });
             }
         }
-        return () => clearInterval(interval);
+        return () => clearInterval(intervalRef.current);
     }, [isActive, timeLeft]);
 
     const toggle = () => setIsActive(!isActive);
     const reset = () => {
         setIsActive(false);
+        if (intervalRef.current) clearInterval(intervalRef.current);
         if (audioRef.current) audioRef.current.pause();
         setTimeLeft(mode === 'focus' ? 25 * 60 : mode === 'short' ? 5 * 60 : 50 * 60);
     };
@@ -181,7 +182,13 @@ export default function ZenTimer({ onClose }) {
                     <button
                         key={m.id}
                         className="timer-mode-btn"
-                        onClick={() => { setMode(m.id); setTimeLeft(m.time); setIsActive(false); if (audioRef.current) audioRef.current.pause(); }}
+                        onClick={() => {
+                            if (intervalRef.current) clearInterval(intervalRef.current);
+                            setMode(m.id);
+                            setTimeLeft(m.time);
+                            setIsActive(false);
+                            if (audioRef.current) audioRef.current.pause();
+                        }}
                         style={{
                             border: 'none',
                             background: mode === m.id ? 'var(--bg-card)' : 'transparent',
