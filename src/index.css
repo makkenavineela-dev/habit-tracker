@@ -38,6 +38,28 @@
   --transition-bouncy: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
 
+[data-theme='light'] {
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f1f5f9;
+
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+
+  --accent-sage: #65a30d;
+  --accent-sage-dark: #4d7c0f;
+  --accent-sage-light: #ecfccb;
+
+  --bg-card: #ffffff;
+  --bg-glass: rgba(255, 255, 255, 0.8);
+  --border-glass: rgba(0, 0, 0, 0.08);
+  --border-soft: rgba(0, 0, 0, 0.05);
+
+  --shadow-premium: 0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
+
 /* 1. NATIVE MOBILE RESET */
 * {
   box-sizing: border-box;

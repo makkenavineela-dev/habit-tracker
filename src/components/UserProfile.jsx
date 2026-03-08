@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, User, Activity, CheckCircle, Target, BookOpen, Layers, Sparkles, Trophy, Flame, Zap, Award, Star, LogOut } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell, AreaChart, Area } from 'recharts';
 import { getPastNDays, getShortDayName, formatDate, calculateStreak } from '../utils/dateUtils';
 
 export default function UserProfile({ problems = [], challenges = [], weeklyHabits = [], dailyHabits = [] }) {
@@ -189,27 +189,33 @@ export default function UserProfile({ problems = [], challenges = [], weeklyHabi
                 </motion.div>
 
                 {/* Achievement Cabinet */}
-                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }} className="card" style={{ padding: '1.5rem' }}>
-                    <h2 className="section-title" style={{ fontSize: '1.1rem' }}><Award size={20} /> Awards Cabinet</h2>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '0.75rem', marginTop: '0.5rem' }}>
+                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }} className="card" style={{ padding: '1.75rem' }}>
+                    <h2 className="section-title" style={{ fontSize: '1.2rem', marginBottom: '1.5rem' }}><Award size={22} color="var(--accent-sage-dark)" /> Achievement Vault</h2>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
                         {achievements.map(award => (
                             <motion.div
                                 key={award.id}
+                                whileHover={award.unlocked ? { y: -5, scale: 1.05 } : {}}
                                 whileTap={award.unlocked ? { scale: 0.95 } : {}}
                                 style={{
-                                    padding: '1rem 0.5rem', background: award.unlocked ? 'var(--bg-primary)' : 'var(--bg-secondary)',
-                                    borderRadius: '16px', textAlign: 'center', border: award.unlocked ? '1px solid var(--accent-sage-light)' : '1px dashed var(--border-color)',
-                                    opacity: award.unlocked ? 1 : 0.6
+                                    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem',
+                                    padding: '1.25rem 0.5rem', borderRadius: '24px',
+                                    background: award.unlocked ? 'var(--bg-secondary)' : 'var(--bg-tertiary)',
+                                    border: award.unlocked ? '1.5px solid var(--accent-sage-light)' : '1.5px dashed var(--border-soft)',
+                                    opacity: award.unlocked ? 1 : 0.4,
+                                    transition: 'all 0.3s ease',
+                                    boxShadow: award.unlocked ? 'var(--shadow-active)' : 'none'
                                 }}>
                                 <div style={{
-                                    width: '36px', height: '36px', margin: '0 auto 0.5rem', borderRadius: '10px',
+                                    width: '48px', height: '48px', borderRadius: '14px',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    background: award.unlocked ? 'var(--accent-sage-light)' : 'transparent',
-                                    color: award.unlocked ? 'var(--accent-sage-dark)' : 'var(--text-muted)'
+                                    background: award.unlocked ? 'var(--accent-sage-light)' : 'rgba(255,255,255,0.05)',
+                                    color: award.unlocked ? 'var(--accent-sage-dark)' : 'var(--text-muted)',
+                                    boxShadow: award.unlocked ? '0 8px 16px rgba(200, 245, 102, 0.2)' : 'none'
                                 }}>
-                                    {React.cloneElement(award.icon, { size: 18 })}
+                                    {React.cloneElement(award.icon, { size: 24, strokeWidth: award.unlocked ? 3 : 2 })}
                                 </div>
-                                <div style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.2 }}>{award.name}</div>
+                                <div style={{ fontSize: '0.65rem', fontWeight: 900, color: 'var(--text-primary)', textAlign: 'center', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{award.name}</div>
                             </motion.div>
                         ))}
                     </div>
@@ -258,92 +264,94 @@ export default function UserProfile({ problems = [], challenges = [], weeklyHabi
                         ))}
                     </div>
                 </div>
-                <div style={{ height: '320px', padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <div style={{ height: '320px', padding: '1.5rem', background: 'var(--bg-glass)', borderRadius: '24px', border: '1px solid var(--border-glass)', boxShadow: 'var(--shadow-premium)' }}>
                     <AnimatePresence mode="wait">
                         <motion.div key={activeTab} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} style={{ width: '100%', height: '100%' }}>
                             <ResponsiveContainer>
                                 {activeTab === 'weekly' || activeTab === 'challenges' ? (
-                                    <BarChart data={currentTab.data} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
+                                    <BarChart data={currentTab.data} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
                                         <defs>
                                             <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="0%" stopColor={currentTab.color} stopOpacity={0.8} />
-                                                <stop offset="95%" stopColor={currentTab.color} stopOpacity={0.2} />
+                                                <stop offset="0%" stopColor={currentTab.color} stopOpacity={0.9} />
+                                                <stop offset="100%" stopColor={currentTab.color} stopOpacity={0.1} />
                                             </linearGradient>
                                         </defs>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                                        <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="var(--border-soft)" />
                                         <XAxis
                                             dataKey="name"
                                             axisLine={false}
                                             tickLine={false}
-                                            tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10, fontWeight: 700 }}
+                                            tick={{ fill: 'var(--text-muted)', fontSize: 10, fontWeight: 700 }}
                                             dy={10}
                                         />
                                         <YAxis hide domain={[0, 'auto']} />
                                         <Tooltip
-                                            cursor={{ fill: 'rgba(255,255,255,0.05)', radius: 12 }}
+                                            cursor={{ fill: 'var(--bg-secondary)', opacity: 0.1, radius: 12 }}
                                             contentStyle={{
-                                                background: '#1a1a24',
-                                                border: '1px solid rgba(255,255,255,0.1)',
+                                                background: 'var(--bg-secondary)',
+                                                border: '1px solid var(--border-glass)',
                                                 borderRadius: '16px',
-                                                boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+                                                boxShadow: 'var(--shadow-premium)',
                                                 padding: '12px 16px'
                                             }}
-                                            itemStyle={{ color: '#fff', fontSize: '12px', fontWeight: 800 }}
-                                            labelStyle={{ color: 'rgba(255,255,255,0.5)', fontSize: '10px', marginBottom: '4px', textTransform: 'uppercase' }}
+                                            itemStyle={{ color: 'var(--text-primary)', fontSize: '12px', fontWeight: 800 }}
+                                            labelStyle={{ color: 'var(--text-muted)', fontSize: '10px', marginBottom: '4px', textTransform: 'uppercase' }}
                                         />
                                         <Bar
                                             dataKey="completed"
                                             fill="url(#barGradient)"
-                                            radius={[8, 8, 8, 8]}
+                                            radius={[10, 10, 10, 10]}
                                             barSize={32}
                                             animationDuration={1500}
                                         />
                                     </BarChart>
                                 ) : (
-                                    <LineChart data={currentTab.data} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
+                                    <AreaChart data={currentTab.data} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
                                         <defs>
-                                            <linearGradient id="lineFill" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="0%" stopColor={currentTab.color} stopOpacity={0.2} />
+                                            <linearGradient id="areaFill" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="0%" stopColor={currentTab.color} stopOpacity={0.3} />
                                                 <stop offset="100%" stopColor={currentTab.color} stopOpacity={0} />
                                             </linearGradient>
                                         </defs>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                                        <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="var(--border-soft)" />
                                         <XAxis
                                             dataKey="name"
                                             axisLine={false}
                                             tickLine={false}
-                                            tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10, fontWeight: 700 }}
+                                            tick={{ fill: 'var(--text-muted)', fontSize: 10, fontWeight: 700 }}
                                             dy={10}
                                         />
                                         <YAxis hide domain={[0, 'auto']} />
                                         <Tooltip
                                             contentStyle={{
-                                                background: '#1a1a24',
-                                                border: '1px solid rgba(255,255,255,0.1)',
+                                                background: 'var(--bg-secondary)',
+                                                border: '1px solid var(--border-glass)',
                                                 borderRadius: '16px',
-                                                boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+                                                boxShadow: 'var(--shadow-premium)',
                                                 padding: '12px 16px'
                                             }}
-                                            itemStyle={{ color: '#fff', fontSize: '12px', fontWeight: 800 }}
-                                            labelStyle={{ color: 'rgba(255,255,255,0.5)', fontSize: '10px', marginBottom: '4px', textTransform: 'uppercase' }}
+                                            itemStyle={{ color: 'var(--text-primary)', fontSize: '12px', fontWeight: 800 }}
+                                            labelStyle={{ color: 'var(--text-muted)', fontSize: '10px', marginBottom: '4px', textTransform: 'uppercase' }}
                                         />
-                                        <Line
+                                        <Area
                                             type="monotone"
                                             dataKey="completed"
                                             stroke={currentTab.color}
                                             strokeWidth={4}
-                                            dot={{ r: 6, fill: currentTab.color, strokeWidth: 0 }}
-                                            activeDot={{ r: 8, strokeWidth: 0, shadow: '0 0 20px ' + currentTab.color }}
+                                            fill="url(#areaFill)"
+                                            strokeLinecap="round"
+                                            dot={{ r: 5, fill: 'var(--bg-primary)', stroke: currentTab.color, strokeWidth: 3 }}
+                                            activeDot={{ r: 7, fill: currentTab.color, stroke: 'white', strokeWidth: 3 }}
                                             animationDuration={1500}
                                         />
-                                    </LineChart>
+                                    </AreaChart>
                                 )}
                             </ResponsiveContainer>
                         </motion.div>
                     </AnimatePresence>
                 </div>
-            </motion.div>
-        </div>
+            </motion.div >
+        </div >
     );
 }
 

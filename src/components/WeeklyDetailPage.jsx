@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Target, PlusCircle } from 'lucide-react';
+import { ArrowLeft, Target, PlusCircle, Sun, Moon } from 'lucide-react';
 import WeeklyTracker from './WeeklyTracker';
+import useHabitStore from '../store/useHabitStore';
+import { motion } from 'framer-motion';
 
 export default function WeeklyDetailPage({ weeklyHabits, setWeeklyHabits, onHaptic }) {
+    const { theme, toggleTheme } = useHabitStore();
     const navigate = useNavigate();
     const [name, setName] = useState('');
     const [target, setTarget] = useState(3);
@@ -28,16 +31,28 @@ export default function WeeklyDetailPage({ weeklyHabits, setWeeklyHabits, onHapt
 
     return (
         <div className="app-container">
-            <header className="dashboard-header" style={{ marginBottom: '0.5rem' }}>
-                <div className="title-area">
-                    <h1 style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', transition: 'opacity 0.2s', color: 'var(--text-primary)' }}
-                        onClick={() => navigate('/')}
-                        onMouseOver={e => e.currentTarget.style.opacity = 0.7}
-                        onMouseOut={e => e.currentTarget.style.opacity = 1}>
-                        <ArrowLeft size={24} style={{ marginRight: '0.5rem', color: 'var(--text-muted)' }} />
-                        Weekly Focus Creator
-                    </h1>
-                    <p>Design habit metrics aimed for weekly frequencies (e.g. 3x per week).</p>
+            <header className="dashboard-header" style={{ marginBottom: '1.5rem', padding: '52px 20px 24px', margin: '0 0 1rem 0' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div className="title-area">
+                        <h1 style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', transition: 'opacity 0.2s', color: 'var(--text-primary)', margin: 0 }}
+                            onClick={() => navigate('/')}>
+                            <ArrowLeft size={24} style={{ marginRight: '0.75rem', color: 'var(--text-muted)' }} />
+                            Weekly Focus
+                        </h1>
+                        <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '4px' }}>Design habit metrics aimed for weekly frequencies.</p>
+                    </div>
+
+                    <motion.div
+                        whileTap={{ scale: 0.9 }}
+                        onClick={toggleTheme}
+                        style={{
+                            width: 36, height: 36, borderRadius: 10, background: "var(--bg-card)",
+                            display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
+                            border: "1px solid var(--border-soft)", color: "var(--text-muted)"
+                        }}
+                    >
+                        {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+                    </motion.div>
                 </div>
             </header>
 

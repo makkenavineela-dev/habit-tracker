@@ -13,6 +13,7 @@ const useHabitStore = create(
                 { id: 2, text: "Finish System Design fundamentals" },
                 { id: 3, text: "Update professional portfolio" }
             ],
+            theme: 'dark',
 
             setDailyHabits: (habits) => set({ dailyHabits: habits }),
             addDailyHabit: (name, icon = 'sparkles') => set((state) => ({
@@ -35,6 +36,7 @@ const useHabitStore = create(
             setChallenges: (challenges) => set({ challenges }),
             setProblems: (problems) => set({ problems }),
             setPriorities: (priorities) => set({ priorities }),
+            toggleTheme: () => set((state) => ({ theme: state.theme === 'dark' ? 'light' : 'dark' })),
         }),
         {
             name: 'habit-storage',

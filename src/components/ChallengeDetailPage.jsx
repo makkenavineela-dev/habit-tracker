@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Target, Calendar } from 'lucide-react';
+import { ArrowLeft, Target, Calendar, Sun, Moon } from 'lucide-react';
 import { formatDate } from '../utils/dateUtils';
+import useHabitStore from '../store/useHabitStore';
+import { motion } from 'framer-motion';
 
 export default function ChallengeDetailPage({ challenges, setChallenges }) {
+    const { theme, toggleTheme } = useHabitStore();
     const navigate = useNavigate();
     const [title, setTitle] = useState('');
     const [startDate, setStartDate] = useState(formatDate(new Date()));
@@ -61,16 +64,28 @@ export default function ChallengeDetailPage({ challenges, setChallenges }) {
 
     return (
         <div className="app-container">
-            <header className="dashboard-header" style={{ marginBottom: '0.5rem' }}>
-                <div className="title-area">
-                    <h1 style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', transition: 'opacity 0.2s', color: 'var(--text-primary)' }}
-                        onClick={() => navigate('/')}
-                        onMouseOver={e => e.currentTarget.style.opacity = 0.7}
-                        onMouseOut={e => e.currentTarget.style.opacity = 1}>
-                        <ArrowLeft size={24} style={{ marginRight: '0.5rem', color: 'var(--text-muted)' }} />
-                        Challenge Creator
-                    </h1>
-                    <p>Design a custom tracker by setting a goal, start date, and end date.</p>
+            <header className="dashboard-header" style={{ marginBottom: '1.5rem', padding: '52px 20px 24px', margin: '0 0 1rem 0' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div className="title-area">
+                        <h1 style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', transition: 'opacity 0.2s', color: 'var(--text-primary)', margin: 0 }}
+                            onClick={() => navigate('/')}>
+                            <ArrowLeft size={24} style={{ marginRight: '0.75rem', color: 'var(--text-muted)' }} />
+                            Arena Challenges
+                        </h1>
+                        <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '4px' }}>Level up by creating and completing custom long-term challenges.</p>
+                    </div>
+
+                    <motion.div
+                        whileTap={{ scale: 0.9 }}
+                        onClick={toggleTheme}
+                        style={{
+                            width: 36, height: 36, borderRadius: 10, background: "var(--bg-card)",
+                            display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
+                            border: "1px solid var(--border-soft)", color: "var(--text-muted)"
+                        }}
+                    >
+                        {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+                    </motion.div>
                 </div>
             </header>
 
