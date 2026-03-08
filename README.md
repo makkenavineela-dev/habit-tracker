@@ -20,7 +20,11 @@ A modern, mobile-first daily habit tracker designed to help you build and mainta
 
 ## Setup & Running Locally
 
-1. **Install Dependencies**
+1. **Environment Configuration**
+   - Copy `.env.example` to `.env`.
+   - Update `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in `.env` with your project credentials.
+
+2. **Install Dependencies**
    ```bash
    npm install
    ```
