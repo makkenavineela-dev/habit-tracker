@@ -82,9 +82,9 @@ export default function WeeklyDetailPage({ weeklyHabits, setWeeklyHabits, onHapt
                     <button
                         type="submit"
                         style={{
-                            padding: '0.75rem 1.5rem', background: 'var(--text-primary)', color: 'white',
-                            border: 'none', borderRadius: 'var(--radius-sm)', cursor: 'pointer', fontWeight: 600, height: '44px',
-                            minWidth: '120px'
+                            padding: '0.75rem 1.5rem', background: 'var(--accent-sage-dark)', color: 'var(--bg-primary)',
+                            border: 'none', borderRadius: 'var(--radius-sm)', cursor: 'pointer', fontWeight: 800, height: '44px',
+                            minWidth: '120px', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.75rem'
                         }}
                     >
                         Create

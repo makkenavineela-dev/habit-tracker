@@ -1,19 +1,25 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/supabase';
-import { Mail, Lock, UserPlus, LogIn, Sparkles, AlertCircle } from 'lucide-react';
+import { Mail, Lock, UserPlus, LogIn, Sparkles, AlertCircle, CheckCircle } from 'lucide-react';
 
 export default function Auth() {
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [isSignUp, setIsSignUp] = useState(false);
+
     const [mode, setMode] = useState('login'); // 'login', 'signup', 'forgot'
     const [error, setError] = useState(null);
     const [message, setMessage] = useState(null);
 
     const handleAuth = async (e) => {
         e.preventDefault();
+
+        if (mode !== 'forgot' && password.length < 6) {
+            setError('Password must be at least 6 characters long');
+            return;
+        }
+
         setLoading(true);
         setError(null);
         setMessage(null);
@@ -97,10 +103,11 @@ export default function Auth() {
                             <Lock size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
                             <input
                                 type="password"
-                                placeholder="Password"
+                                placeholder="Password (min 6 chars)"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
+                                minLength={6}
                                 style={{
                                     width: '100%', padding: '1rem 1rem 1rem 3rem', borderRadius: 'var(--radius-sm)',
                                     border: '1px solid var(--border-color)', outline: 'none', background: 'var(--bg-secondary)',

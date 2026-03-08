@@ -13,7 +13,7 @@ import WeeklyDetailPage from './components/WeeklyDetailPage';
 import UserProfile from './components/UserProfile';
 import ZenTimer from './components/ZenTimer';
 import { formatDate } from './utils/dateUtils';
-import { Zap, Activity, Dumbbell, BookOpen, User, Sun, Droplets, Footprints, Moon, Sparkles, Trophy, Plus, X, LogOut, Cloud, CloudOff, CheckCircle, RefreshCw } from 'lucide-react';
+import { Zap, Activity, BookOpen, User, Sparkles, Trophy, Plus, CheckCircle, RefreshCw, Cloud, CloudOff } from 'lucide-react';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { LocalNotifications } from '@capacitor/local-notifications';
@@ -26,30 +26,8 @@ import './App.css';
 const triggerHaptic = async () => {
   try {
     await Haptics.impact({ style: ImpactStyle.Light });
-  } catch (e) {
-    // Falls back gracefully on web
-  }
+  } catch (e) { }
 };
-
-// Initial data for fresh installs
-const defaultProblems = [
-  { id: 1, number: "1", name: "Two Sum", platform: "LeetCode", difficulty: "Easy", topic: "Hash Table", status: "Done", dateAdded: formatDate(new Date()) },
-  { id: 2, number: "146", name: "LRU Cache", platform: "LeetCode", difficulty: "Medium", topic: "Design", status: "Attempted", dateAdded: formatDate(new Date()) }
-];
-
-const defaultChallenges = [
-  { id: 1, title: "10k Steps Challenge", startDate: "2026-03-01", endDate: "2026-03-31", checks: Array(30).fill(false).map((_, i) => i < 5) }
-];
-
-const defaultWeekly = [
-  { id: 1, name: "Running", icon: 'activity', target: 3, checks: 2 },
-  { id: 2, name: "Book Reading", icon: 'book', target: 1, checks: 0 }
-];
-
-const defaultDaily = [
-  { id: 1, name: "Deep Work", icon: 'sparkles', completedDates: [formatDate(new Date())] },
-  { id: 2, name: "Hydration", icon: 'droplets', completedDates: [] }
-];
 
 const PageTransition = ({ children }) => (
   <motion.div
@@ -78,17 +56,17 @@ class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{ padding: '2rem', background: '#fff1f0', color: '#c93d3d', minHeight: '100vh', fontFamily: 'monospace' }}>
-          <h2>Something went wrong in Ritual Flow.</h2>
-          <pre>{this.state.error?.toString()}</pre>
+        <div style={{ padding: '2rem', background: '#0a0a0f', color: '#ff7043', minHeight: '100vh', fontFamily: 'monospace', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '2rem', marginBottom: '1rem' }}>A Glitch in the Ritual.</h2>
+          <pre style={{ background: 'rgba(255,112,67,0.1)', padding: '1rem', borderRadius: '12px', marginBottom: '2rem', maxWidth: '80%' }}>{this.state.error?.toString()}</pre>
           <button onClick={() => {
-            const msg = `CRITICAL ERROR: ${this.state.error?.message || 'Unknown error'}\n\nThis might be caused by corrupted local data. Would you like to clear your local habit storage and reload? (Cloud data will remain safe if synced).`;
+            const msg = `Would you like to clear your local storage to fix this? Your cloud data is safe.`;
             if (confirm(msg)) {
               localStorage.removeItem('habit-storage');
               window.location.reload();
             }
-          }} style={{ padding: '0.6rem 1.2rem', background: '#c93d3d', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 12px rgba(201, 61, 61, 0.2)' }}>
-            Attempt Recovery (Clear Local Store)
+          }} style={{ padding: '1rem 2rem', background: '#ff7043', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 800, cursor: 'pointer' }}>
+            Repair Ritual (Clear Cache)
           </button>
         </div>
       );
@@ -99,63 +77,34 @@ class ErrorBoundary extends React.Component {
 
 const SyncIndicator = ({ status }) => {
   const meta = {
-    syncing: { icon: <RefreshCw size={14} className="animate-spin" />, text: 'Syncing...', color: 'var(--accent-sage-dark)' },
-    saved: { icon: <CheckCircle size={14} />, text: 'Cloud Secured', color: 'var(--tag-green-text)' },
-    error: { icon: <CloudOff size={14} />, text: 'Sync Paused', color: 'var(--tag-red-text)' },
-    idle: { icon: <Cloud size={14} />, text: 'Cloud Sync On', color: 'var(--text-muted)' }
+    syncing: { icon: <RefreshCw size={12} className="animate-spin" />, text: 'Syncing', color: '#c8f566' },
+    saved: { icon: <CheckCircle size={12} />, text: 'Synced', color: '#c8f566' },
+    error: { icon: <CloudOff size={12} />, text: 'Offline', color: '#ff7043' },
+    idle: { icon: <Cloud size={12} />, text: 'Ready', color: 'rgba(255,255,255,0.3)' }
   };
-
   const current = meta[status] || meta.idle;
-
   return (
-    <motion.div
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      style={{
-        display: 'flex', alignItems: 'center', gap: '0.4rem',
-        padding: '0.4rem 0.8rem', borderRadius: '100px',
-        background: 'var(--bg-tertiary)', fontSize: '0.75rem',
-        fontWeight: 800, color: current.color,
-        border: `1px solid ${status === 'syncing' ? 'var(--accent-sage)' : 'transparent'}`,
-        transition: 'all 0.3s ease'
-      }}
-    >
-      {current.icon}
-      <span style={{ textTransform: 'uppercase', letterSpacing: '0.03em' }}>{current.text}</span>
-    </motion.div>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 100, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', fontSize: 10, fontWeight: 800, color: current.color, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+      <div style={{ width: 6, height: 6, borderRadius: '50%', background: current.color, animation: status === 'syncing' ? 'pulseDot 1s infinite' : 'none' }} />
+      {current.text}
+    </div>
   );
 };
 
-const BackgroundDecoration = () => (
-  <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: -1, overflow: 'hidden', pointerEvents: 'none' }}>
-    <motion.div
-      animate={{
-        scale: [1, 1.3, 1],
-        rotate: [0, 120, 0],
-        x: ['-10%', '10%', '-10%'],
-        y: ['-5%', '15%', '-5%']
-      }}
-      transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
-      style={{
-        position: 'absolute', top: '-15%', left: '-15%', width: '50%', height: '50%',
-        background: 'radial-gradient(circle, rgba(91, 115, 88, 0.08) 0%, transparent 70%)',
-        filter: 'blur(80px)', opacity: 0.8
-      }}
-    />
-    <motion.div
-      animate={{
-        scale: [1.3, 1, 1.3],
-        rotate: [0, -90, 0],
-        x: ['10%', '-10%', '10%'],
-        y: ['15%', '-5%', '15%']
-      }}
-      transition={{ duration: 30, repeat: Infinity, ease: "easeInOut" }}
-      style={{
-        position: 'absolute', bottom: '-10%', right: '-10%', width: '45%', height: '45%',
-        background: 'radial-gradient(circle, rgba(166, 139, 124, 0.06) 0%, transparent 70%)',
-        filter: 'blur(60px)', opacity: 0.6
-      }}
-    />
+const AmbientBlobs = () => (
+  <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0, overflow: "hidden" }}>
+    {[
+      { top: "-10%", left: "-15%", size: "50vw", color: "rgba(200,245,102,.06)", dur: "20s" },
+      { bottom: "10%", right: "-10%", size: "40vw", color: "rgba(139,100,220,.08)", dur: "25s", rev: true },
+      { top: "40%", left: "30%", size: "30vw", color: "rgba(100,180,255,.04)", dur: "18s", delay: "5s" },
+    ].map((b, i) => (
+      <div key={i} style={{
+        position: "absolute", width: b.size, height: b.size, borderRadius: "50%",
+        background: `radial-gradient(circle, ${b.color} 0%, transparent 70%)`,
+        animation: `drift ${b.dur} ease-in-out infinite ${b.rev ? "reverse" : ""} ${b.delay || ""}`,
+        top: b.top, left: b.left, bottom: b.bottom, right: b.right,
+      }} />
+    ))}
   </div>
 );
 
@@ -166,96 +115,8 @@ export default function App() {
   const [isInitializing, setIsInitializing] = useState(true);
   const [isTimerOpen, setIsTimerOpen] = useState(false);
   const [recoveryMode, setRecoveryMode] = useState(false);
-
-  useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        setSession(session);
-      } catch (e) {
-        console.error("Session check failed:", e);
-      } finally {
-        setIsInitializing(false);
-      }
-    };
-
-    checkSession();
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'PASSWORD_RECOVERY') {
-        setRecoveryMode(true);
-      }
-      setSession(session);
-      setIsInitializing(false);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    const initNative = async () => {
-      try {
-        await StatusBar.setStyle({ style: Style.Light });
-        await StatusBar.setBackgroundColor({ color: '#fdfdfc' });
-      } catch (e) { }
-    };
-    initNative();
-  }, []);
-
-  useEffect(() => {
-    const setupReminders = async () => {
-      try {
-        const { display } = await LocalNotifications.checkPermissions();
-        if (display !== 'granted') {
-          await LocalNotifications.requestPermissions();
-        }
-
-        // Clear existing to avoid duplicates
-        await LocalNotifications.cancel({ notifications: [{ id: 101 }] });
-
-        await LocalNotifications.schedule({
-          notifications: [
-            {
-              title: "Sacred Rituals Await",
-              body: "Take a moment to center yourself and log your progress.",
-              id: 101,
-              schedule: {
-                on: { hour: 21, minute: 0 },
-                repeats: true,
-                allowWhileIdle: true
-              },
-              sound: 'default',
-              actionTypeId: "",
-              extra: null
-            }
-          ]
-        });
-      } catch (e) {
-        console.warn("Notifications not supported or denied.");
-      }
-    };
-    setupReminders();
-  }, []);
-
-  // Load state from localStorage with validation
-  const loadState = (key, fallback) => {
-    try {
-      const saved = localStorage.getItem(key);
-      if (!saved) return fallback;
-      const parsed = JSON.parse(saved);
-      // Basic check to ensure it's an array if expected
-      if (Array.isArray(fallback) && !Array.isArray(parsed)) return fallback;
-      return parsed;
-    } catch (e) {
-      console.error(`Error loading ${key} from localStorage:`, e);
-      return fallback;
-    }
-  };
-
   const [globalProgress, setGlobalProgress] = useState(0);
-  const [syncStatus, setSyncStatus] = useState('idle'); // 'idle', 'syncing', 'saved', 'error'
+  const [syncStatus, setSyncStatus] = useState('idle');
   const [isCloudLoaded, setIsCloudLoaded] = useState(false);
 
   const {
@@ -266,17 +127,45 @@ export default function App() {
     addDailyHabit, deleteDailyHabit, updateDailyHabit
   } = useHabitStore();
 
-  // Load from Cloud once on session change
+  useEffect(() => {
+    const checkWeeklyReset = () => {
+      const now = new Date();
+      // Monday is 1 in getDay()
+      const isMonday = now.getDay() === 1;
+      const lastReset = localStorage.getItem('last-weekly-reset');
+      const todayStr = formatDate(now);
+
+      if (isMonday && lastReset !== todayStr) {
+        useHabitStore.getState().resetWeeklyHabits();
+        localStorage.setItem('last-weekly-reset', todayStr);
+        console.log("Weekly goals have been reset for the new week.");
+      }
+    };
+
+    if (isCloudLoaded) {
+      checkWeeklyReset();
+    }
+  }, [isCloudLoaded]);
+
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setSession(session);
+      setIsInitializing(false);
+    };
+    checkSession();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
+      setSession(session);
+      setIsInitializing(false);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
   useEffect(() => {
     if (session?.user?.id && !isCloudLoaded) {
       const loadFromCloud = async () => {
-        const { data, error } = await supabase
-          .from('user_sync')
-          .select('*')
-          .eq('user_id', session.user.id)
-          .single();
-
-        if (data && !error) {
+        const { data } = await supabase.from('user_sync').select('*').eq('user_id', session.user.id).single();
+        if (data) {
           if (data.problems) setProblems(data.problems);
           if (data.challenges) setChallenges(data.challenges);
           if (data.weeklyHabits) setWeeklyHabits(data.weeklyHabits);
@@ -285,207 +174,95 @@ export default function App() {
         setIsCloudLoaded(true);
       };
       loadFromCloud();
-    } else if (!session) {
-      setIsCloudLoaded(false);
     }
   }, [session, isCloudLoaded]);
 
-  // Debounced Auto-Save & Sync Effect
   useEffect(() => {
-    if (!isCloudLoaded) return; // Prevent overwriting cloud data before it's loaded
-
+    if (!isCloudLoaded || !session) return;
     const syncTimeout = setTimeout(async () => {
-      // Cloud Sync
-      if (session?.user?.id) {
-        setSyncStatus('syncing');
-        const payload = {
-          user_id: session.user.id,
-          problems,
-          challenges,
-          weeklyHabits,
-          dailyHabits,
-          updated_at: new Date().toISOString()
-        };
-
-        const { error } = await supabase
-          .from('user_sync')
-          .upsert(payload, { onConflict: 'user_id' });
-
-        if (error) {
-          console.error("Cloud Sync Error:", error);
-          setSyncStatus('error');
-        } else {
-          setSyncStatus('saved');
-          setTimeout(() => setSyncStatus('idle'), 3000);
-        }
-      }
-    }, 2000); // 2 second debounce
-
+      setSyncStatus('syncing');
+      const { error } = await supabase.from('user_sync').upsert({
+        user_id: session.user.id, problems, challenges, weeklyHabits, dailyHabits, updated_at: new Date().toISOString()
+      });
+      setSyncStatus(error ? 'error' : 'saved');
+      setTimeout(() => setSyncStatus('idle'), 3000);
+    }, 2000);
     return () => clearTimeout(syncTimeout);
   }, [problems, challenges, weeklyHabits, dailyHabits, session, isCloudLoaded]);
 
-  // Check for 100% daily completion to fire confetti
-  useEffect(() => {
-    if (dailyHabits.length > 0) {
-      const todayStr = formatDate(new Date());
-      const allDone = dailyHabits.every(h => h.completedDates && h.completedDates.includes(todayStr));
-      if (allDone && globalProgress === 100) {
-        confetti({
-          particleCount: 150,
-          spread: 70,
-          origin: { y: 0.6 },
-          colors: ['#6b8268', '#7a9476', '#b69e90']
-        });
-      }
-    }
-  }, [dailyHabits, globalProgress]);
-
-  const addHabit = (name, icon = 'sparkles') => addDailyHabit(name, icon);
-  const deleteHabit = (id) => deleteDailyHabit(id);
-  const updateHabit = (id, newName) => updateDailyHabit(id, newName);
-
-  if (isInitializing) {
-    return (
-      <ErrorBoundary>
-        <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-primary)' }}>
-          <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}>
-            <Sparkles size={40} color="var(--accent-sage-dark)" />
-          </motion.div>
-        </div>
-      </ErrorBoundary>
-    );
-  }
-
-  if (!session) {
-    return (
-      <ErrorBoundary>
-        <BackgroundDecoration />
-        {recoveryMode ? (
-          <UpdatePassword onComplete={() => setRecoveryMode(false)} />
-        ) : (
-          <Auth />
-        )}
-      </ErrorBoundary>
-    );
-  }
-
-  return (
-    <ErrorBoundary>
-      <BackgroundDecoration />
-      <AnimatePresence mode="wait">
-        <Routes location={location} key={location.pathname}>
-          <Route path="/" element={
-            <Dashboard
-              globalProgress={globalProgress} setGlobalProgress={setGlobalProgress}
-              problems={problems} setProblems={setProblems}
-              challenges={challenges} setChallenges={setChallenges}
-              weeklyHabits={weeklyHabits} setWeeklyHabits={setWeeklyHabits}
-              dailyHabits={dailyHabits} setDailyHabits={setDailyHabits}
-              onAddHabit={addHabit} onDeleteHabit={deleteHabit} onUpdateHabit={updateHabit}
-              syncStatus={syncStatus} onOpenTimer={() => setIsTimerOpen(true)}
-              isTimerOpen={isTimerOpen}
-            />
-          } />
-          <Route path="/profile" element={
-            <PageTransition>
-              <UserProfile
-                problems={problems} challenges={challenges}
-                weeklyHabits={weeklyHabits} dailyHabits={dailyHabits}
-              />
-            </PageTransition>
-          } />
-          <Route path="/dsa" element={<DSADetailPage problems={problems} setProblems={setProblems} onHaptic={triggerHaptic} />} />
-          <Route path="/weekly" element={<WeeklyDetailPage weeklyHabits={weeklyHabits} setWeeklyHabits={setWeeklyHabits} onHaptic={triggerHaptic} />} />
-          <Route path="/challenges" element={<ChallengeDetailPage challenges={challenges} setChallenges={setChallenges} onHaptic={triggerHaptic} />} />
-        </Routes>
-      </AnimatePresence>
-      <BottomNav />
-      <AnimatePresence>
-        {isTimerOpen && <ZenTimer onClose={() => setIsTimerOpen(false)} />}
-      </AnimatePresence>
-    </ErrorBoundary>
-  );
-}
-
-const BottomNav = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const navItems = [
-    { label: 'Home', icon: <Sparkles size={20} />, path: '/' },
-    { label: 'Weekly', icon: <Activity size={20} />, path: '/weekly' },
-    { label: 'DSA', icon: <BookOpen size={20} />, path: '/dsa' },
-    { label: 'Arena', icon: <Trophy size={20} />, path: '/challenges' },
-    { label: 'Profile', icon: <User size={20} />, path: '/profile' }
-  ];
-
-  return (
-    <div className="bottom-nav">
-      {navItems.map((item) => {
-        const isActive = location.pathname === item.path;
-        return (
-          <div
-            key={item.label}
-            className={`nav-item ${isActive ? 'active' : ''}`}
-            onClick={() => navigate(item.path)}
-          >
-            <div className="nav-icon">{item.icon}</div>
-            <span className="nav-label">{item.label}</span>
-          </div>
-        );
-      })}
-    </div>
-  );
-};
-
-
-function UpdatePassword({ onComplete }) {
-  const [newPassword, setNewPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const handleUpdate = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    try {
-      const { error } = await supabase.auth.updateUser({ password: newPassword });
-      if (error) throw error;
-      alert('Password updated successfully!');
-      onComplete();
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div className="auth-container" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
-      <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="card auth-card" style={{ maxWidth: '400px', width: '100%', padding: '3rem', textAlign: 'center' }}>
-        <h2 className="text-gradient" style={{ marginBottom: '1rem' }}>Secure Your Ritual</h2>
-        <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>Enter your new password below.</p>
-        <form onSubmit={handleUpdate} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <input
-            type="password"
-            placeholder="New Password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            required
-            style={{ width: '100%', padding: '1rem', borderRadius: '12px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)' }}
-          />
-          {error && <p style={{ color: 'var(--tag-red-text)', fontSize: '0.8rem' }}>{error}</p>}
-          <button
-            disabled={loading}
-            style={{ background: 'var(--accent-sage-dark)', color: 'white', border: 'none', padding: '1rem', borderRadius: '12px', fontWeight: 800, cursor: 'pointer' }}
-          >
-            {loading ? 'Updating...' : 'Set New Password'}
-          </button>
-        </form>
+  if (isInitializing) return (
+    <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0a0f' }}>
+      <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}>
+        <Sparkles size={40} color="#c8f566" />
       </motion.div>
     </div>
   );
+
+  if (!session) return (
+    <ErrorBoundary>
+      <AmbientBlobs />
+      <Auth />
+    </ErrorBoundary>
+  );
+
+  return (
+    <div style={{ minHeight: "100vh", background: "#0a0a0f", fontFamily: "'DM Sans', sans-serif", color: "#e8e4d9", overflowX: "hidden" }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap');
+        @keyframes drift{0%,100%{transform:translate(0,0) rotate(0deg)}33%{transform:translate(30px,-20px) rotate(120deg)}66%{transform:translate(-20px,10px) rotate(240deg)}}
+        @keyframes sweepIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes pulseDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+        .glass{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(20px);border-radius:20px;transition:all .3s}
+        .nav-item-v3{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 12px;border-radius:14px;cursor:pointer;transition:all .2s;color:rgba(255,255,255,.5);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+        .nav-item-v3.active{color:#c8f566;background:rgba(200,245,102,.1)}
+      `}</style>
+      <AmbientBlobs />
+      <ErrorBoundary>
+        <AnimatePresence mode="wait">
+          <Routes location={location} key={location.pathname}>
+            <Route path="/" element={
+              <Dashboard
+                globalProgress={globalProgress} setGlobalProgress={setGlobalProgress}
+                problems={problems} setProblems={setProblems}
+                challenges={challenges} setChallenges={setChallenges}
+                weeklyHabits={weeklyHabits} setWeeklyHabits={setWeeklyHabits}
+                dailyHabits={dailyHabits} setDailyHabits={setDailyHabits}
+                onAddHabit={addDailyHabit} onDeleteHabit={deleteDailyHabit} onUpdateHabit={updateDailyHabit}
+                syncStatus={syncStatus} onOpenTimer={() => setIsTimerOpen(true)}
+              />
+            } />
+            <Route path="/profile" element={<PageTransition><UserProfile problems={problems} challenges={challenges} weeklyHabits={weeklyHabits} dailyHabits={dailyHabits} /></PageTransition>} />
+            <Route path="/dsa" element={<DSADetailPage problems={problems} setProblems={setProblems} onHaptic={triggerHaptic} />} />
+            <Route path="/weekly" element={<WeeklyDetailPage weeklyHabits={weeklyHabits} setWeeklyHabits={setWeeklyHabits} onHaptic={triggerHaptic} />} />
+            <Route path="/challenges" element={<ChallengeDetailPage challenges={challenges} setChallenges={setChallenges} onHaptic={triggerHaptic} />} />
+          </Routes>
+        </AnimatePresence>
+        <BottomNav activePath={location.pathname} navigate={navigate} />
+        {isTimerOpen && <ZenTimer onClose={() => setIsTimerOpen(false)} />}
+      </ErrorBoundary>
+    </div>
+  );
 }
+
+const BottomNav = ({ activePath, navigate }) => {
+  const items = [
+    { id: "/", icon: "✦", label: "Home" },
+    { id: "/weekly", icon: "◎", label: "Weekly" },
+    { id: "/dsa", icon: "⌨", label: "DSA" },
+    { id: "/challenges", icon: "⚔", label: "Arena" },
+    { id: "/profile", icon: "◐", label: "Profile" }
+  ];
+  return (
+    <div style={{ position: "fixed", bottom: 0, left: "50%", transform: "translateX(-50%)", width: "100%", maxWidth: 430, background: "rgba(10,10,15,.92)", backdropFilter: "blur(30px)", borderTop: "1px solid rgba(255,255,255,.06)", padding: "10px 20px 28px", display: "flex", justifyContent: "space-around", zIndex: 100 }}>
+      {items.map(item => (
+        <div key={item.id} className={`nav-item-v3 ${activePath === item.id ? 'active' : ''}`} onClick={() => navigate(item.id)}>
+          <span style={{ fontSize: 18, lineHeight: 1 }}>{item.icon}</span>
+          {item.label}
+        </div>
+      ))}
+    </div>
+  );
+};
 
 function Dashboard({
   globalProgress, setGlobalProgress,
@@ -494,40 +271,59 @@ function Dashboard({
   weeklyHabits, setWeeklyHabits,
   dailyHabits, setDailyHabits,
   onAddHabit, onDeleteHabit, onUpdateHabit,
-  syncStatus, onOpenTimer, isTimerOpen
+  syncStatus, onOpenTimer
 }) {
   const navigate = useNavigate();
+  const today = new Date();
+  const circumference = 2 * Math.PI * 42;
 
   return (
     <PageTransition>
-      <div className="app-container">
-        <header className="dashboard-header">
-          <div className="title-row">
-            <h1 className="text-gradient dashboard-title">Ritual Flow</h1>
+      <div style={{ maxWidth: 430, margin: "0 auto", padding: "0 0 100px" }}>
+        {/* HEADER */}
+        <div style={{ padding: "52px 20px 24px", display: "flex", flexDirection: "column", gap: 16, animation: "sweepIn .6s ease both" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".14em", color: "rgba(255,255,255,0.6)", textTransform: "uppercase", marginBottom: 4 }}>
+                {today.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
+              </div>
+              <h1 style={{ fontFamily: "'Playfair Display',serif", fontSize: 32, fontWeight: 700, letterSpacing: "-.02em", background: "linear-gradient(135deg,#fff 0%,rgba(255,255,255,.6) 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+                Ritual Flow
+              </h1>
+            </div>
             <SyncIndicator status={syncStatus} />
           </div>
-          <div className="header-controls">
-            <motion.div
-              whileTap={{ scale: 0.95 }}
-              onClick={onOpenTimer}
-              className={`user-profile-btn ${isTimerOpen ? 'pulse' : ''}`}
-            >
-              <Zap size={16} />
-              Focus
-            </motion.div>
-            <motion.div
-              whileTap={{ scale: 0.95 }}
-              onClick={() => navigate('/profile')}
-              className="user-profile-btn"
-            >
-              <User size={16} />
-              Profile
-            </motion.div>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button onClick={onOpenTimer} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 16px", borderRadius: 12, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.1)", fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,.7)", cursor: "pointer" }}>⚡ Focus</button>
+            <button onClick={() => navigate('/profile')} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 16px", borderRadius: 12, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.1)", fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,.7)", cursor: "pointer" }}>👤 Profile</button>
           </div>
-        </header>
+        </div>
+
+        {/* PERFORMANCE */}
+        <div style={{ margin: "0 20px 16px", animation: "sweepIn .6s .15s ease both", opacity: 0, animationFillMode: "forwards" }}>
+          <div className="glass" style={{ padding: "28px 24px", display: "flex", alignItems: "center", gap: 24 }}>
+            <div style={{ position: "relative", width: 100, height: 100, flexShrink: 0 }}>
+              <svg width="100" height="100" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,.06)" strokeWidth="8" />
+                <circle cx="50" cy="50" r="42" fill="none" stroke="url(#g1)" strokeWidth="8" strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={circumference * (1 - globalProgress / 100)} transform="rotate(-90 50 50)" style={{ transition: 'stroke-dashoffset 1.5s ease' }} />
+                <defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#c8f566" /><stop offset="100%" stopColor="#8bdb4a" /></linearGradient></defs>
+              </svg>
+              <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 22, fontWeight: 700, color: "#c8f566" }}>{globalProgress}%</div>
+                <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.5)", textTransform: "uppercase" }}>today</div>
+              </div>
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.5)", textTransform: "uppercase", marginBottom: 4 }}>Performance</div>
+              <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 20, color: "#e8e4d9" }}>{globalProgress > 70 ? "Excellent!" : "Steady Progress"}</div>
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", marginTop: 4 }}>You're on track to hit your targets.</div>
+            </div>
+          </div>
+        </div>
 
         <PriorityDashboard globalProgress={globalProgress} />
 
+        {/* DAILY RITUALS (Styled V3 but keeping DailyGrid functionality) */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <DailyGrid
             habits={dailyHabits}
@@ -540,50 +336,17 @@ function Dashboard({
           />
         </motion.div>
 
-        <div className="grid-container layout-2">
-          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }}>
-            <WeeklyTracker
-              weeklyHabits={weeklyHabits}
-              setWeeklyHabits={setWeeklyHabits}
-              previewOnly={true}
-              onHaptic={triggerHaptic}
-            />
-            <motion.div
-              whileTap={{ scale: 0.98 }}
-              onClick={() => navigate('/weekly')}
-              className="manage-btn-mobile"
-            >
-              Manage Weekly Goals <Activity size={16} />
-            </motion.div>
-          </motion.div>
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }}>
-            <DSATracker
-              problems={problems}
-              setProblems={setProblems}
-              previewOnly={true}
-              onHaptic={triggerHaptic}
-            />
-            <motion.div
-              whileTap={{ scale: 0.98 }}
-              onClick={() => navigate('/dsa')}
-              className="manage-btn-mobile"
-            >
-              View Problem Log <BookOpen size={16} />
-            </motion.div>
-          </motion.div>
-        </div>
-
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
-          <ChallengeGallery
-            challenges={challenges}
-            setChallenges={setChallenges}
-            previewOnly={true}
-            onHaptic={triggerHaptic}
-          />
-          <div onClick={() => navigate('/challenges')} className="manage-link" style={{ marginTop: '0.5rem', display: 'flex', justifyContent: 'flex-end' }}>
-            Enter Challenge Arena →
+        {/* FOOTER QUOTE */}
+        <div style={{ margin: "24px 20px", padding: "20px 24px", borderRadius: 20, background: "linear-gradient(135deg,rgba(200,245,102,.08),rgba(139,100,220,.08))", border: "1px solid rgba(200,245,102,.12)" }}>
+          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 15, fontStyle: "italic", color: "rgba(255,255,255,.55)", lineHeight: 1.7, marginBottom: 12 }}>
+            "Success is the sum of small efforts, repeated day in and day out."
           </div>
-        </motion.div>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ flex: 1, height: 1, background: "rgba(200,245,102,.2)" }} />
+            <span style={{ fontSize: 11, fontWeight: 700, color: "rgba(200,245,102,.6)", letterSpacing: ".06em" }}>ROBERT COLLIER</span>
+            <div style={{ flex: 1, height: 1, background: "rgba(200,245,102,.2)" }} />
+          </div>
+        </div>
       </div>
     </PageTransition>
   );

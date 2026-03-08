@@ -83,7 +83,7 @@ export default function ChallengeGallery({ challenges, setChallenges, previewOnl
                                 <motion.div
                                     key={dIdx}
                                     whileHover={{ scale: 1.2, rotate: 5, zIndex: 10 }}
-                                    className={`challenge-day ${dIdx < 5 ? 'completed' : ''}`}
+                                    className={`challenge-day ${challenge.checks?.[dIdx] ? 'completed' : ''}`}
                                     title={`Day ${dIdx + 1}`}
                                     onClick={() => { if (onHaptic) onHaptic(); }}
                                 >

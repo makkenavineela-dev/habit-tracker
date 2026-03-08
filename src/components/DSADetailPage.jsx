@@ -98,8 +98,9 @@ export default function DSADetailPage({ problems, setProblems, onHaptic }) {
                     <button
                         type="submit"
                         style={{
-                            padding: '0.75rem 1.5rem', background: 'var(--text-primary)', color: 'white',
-                            border: 'none', borderRadius: 'var(--radius-sm)', cursor: 'pointer', fontWeight: 600, height: '44px'
+                            padding: '0.75rem 1.5rem', background: 'var(--accent-sage-dark)', color: 'var(--bg-primary)',
+                            border: 'none', borderRadius: 'var(--radius-sm)', cursor: 'pointer', fontWeight: 800, height: '44px',
+                            textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.75rem'
                         }}
                     >
                         Add Log

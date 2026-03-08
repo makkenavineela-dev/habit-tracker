@@ -1,36 +1,37 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-  /* Premium Neo-Organic Palette */
-  --bg-primary: #fdfdfc;
-  --bg-secondary: #f8f7f4;
-  --bg-tertiary: #f2f1eb;
+  /* Ritual Flow V3 - Dark Deep-Space Palette */
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #12121a;
+  --bg-tertiary: #1a1a24;
 
-  --text-primary: #1c1c1a;
-  --text-secondary: #4a4a44;
-  --text-muted: #8a8a82;
+  --text-primary: #e8e4d9;
+  --text-secondary: rgba(255, 255, 255, 0.85);
+  --text-muted: rgba(255, 255, 255, 0.55);
   --text-white: #ffffff;
 
-  --accent-sage-light: #f1f4f0;
-  --accent-sage: #c0d1ba;
-  --accent-sage-dark: #5b7358;
-  --accent-sage-deep: #3c4d3a;
+  /* Neon Glitch Accents */
+  --accent-sage-light: #d9f99d;
+  --accent-sage: #c8f566;
+  --accent-sage-dark: #8bdb4a;
+  --accent-sage-deep: #4d7c0f;
 
-  --accent-earth-light: #f9f4f1;
-  --accent-earth: #dfcdc3;
-  --accent-earth-dark: #a68b7c;
+  --accent-earth-light: #312e81;
+  --accent-earth: #4338ca;
+  --accent-earth-dark: #8b5cf6;
 
-  /* Sophisticated Glassmorphism */
-  --bg-card: rgba(255, 255, 255, 0.7);
-  --bg-glass: rgba(255, 255, 255, 0.4);
-  --border-glass: rgba(255, 255, 255, 0.82);
-  --border-soft: rgba(0, 0, 0, 0.04);
+  /* Sophisticated V3 Glassmorphism */
+  --bg-card: rgba(255, 255, 255, 0.04);
+  --bg-glass: rgba(255, 255, 255, 0.02);
+  --border-glass: rgba(255, 255, 255, 0.08);
+  --border-soft: rgba(255, 255, 255, 0.04);
 
-  --shadow-premium: 0 12px 30px -10px rgba(0, 0, 0, 0.04);
-  --shadow-active: 0 4px 12px -2px rgba(0, 0, 0, 0.06);
+  --shadow-premium: 0 20px 40px rgba(0, 0, 0, 0.4);
+  --shadow-active: 0 4px 12px rgba(0, 0, 0, 0.2);
 
   --radius-sm: 16px;
-  --radius-md: 24px;
+  --radius-md: 20px;
   --radius-lg: 32px;
 
   --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);

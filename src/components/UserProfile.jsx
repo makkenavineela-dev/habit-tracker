@@ -79,7 +79,7 @@ export default function UserProfile({ problems = [], challenges = [], weeklyHabi
             id: 'weekly',
             label: 'Weekly Goals',
             icon: <Layers size={16} />,
-            data: weeklyHabits.map(h => ({ name: h.name, completed: h.checks || 0, target: h.target || 1 })),
+            data: weeklyHabits.map(h => ({ name: h.name, completed: Array.isArray(h.checks) ? h.checks.filter(Boolean).length : (typeof h.checks === 'number' ? h.checks : 0), target: h.target || 1 })),
             color: '#8b5cf6'
         },
     ];
@@ -258,21 +258,84 @@ export default function UserProfile({ problems = [], challenges = [], weeklyHabi
                         ))}
                     </div>
                 </div>
-                <div style={{ height: '300px' }}>
+                <div style={{ height: '320px', padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.05)' }}>
                     <AnimatePresence mode="wait">
-                        <motion.div key={activeTab} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ width: '100%', height: '100%' }}>
+                        <motion.div key={activeTab} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} style={{ width: '100%', height: '100%' }}>
                             <ResponsiveContainer>
-                                {activeTab === 'weekly' ? (
-                                    <BarChart data={currentTab.data}>
-                                        <XAxis dataKey="name" hide />
-                                        <YAxis hide />
-                                        <Tooltip cursor={{ fill: 'transparent' }} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: 'var(--shadow-lg)' }} />
-                                        <Bar dataKey="completed" radius={[10, 10, 10, 10]} fill={currentTab.color} barSize={40} />
+                                {activeTab === 'weekly' || activeTab === 'challenges' ? (
+                                    <BarChart data={currentTab.data} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
+                                        <defs>
+                                            <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="0%" stopColor={currentTab.color} stopOpacity={0.8} />
+                                                <stop offset="95%" stopColor={currentTab.color} stopOpacity={0.2} />
+                                            </linearGradient>
+                                        </defs>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                                        <XAxis
+                                            dataKey="name"
+                                            axisLine={false}
+                                            tickLine={false}
+                                            tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10, fontWeight: 700 }}
+                                            dy={10}
+                                        />
+                                        <YAxis hide domain={[0, 'auto']} />
+                                        <Tooltip
+                                            cursor={{ fill: 'rgba(255,255,255,0.05)', radius: 12 }}
+                                            contentStyle={{
+                                                background: '#1a1a24',
+                                                border: '1px solid rgba(255,255,255,0.1)',
+                                                borderRadius: '16px',
+                                                boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+                                                padding: '12px 16px'
+                                            }}
+                                            itemStyle={{ color: '#fff', fontSize: '12px', fontWeight: 800 }}
+                                            labelStyle={{ color: 'rgba(255,255,255,0.5)', fontSize: '10px', marginBottom: '4px', textTransform: 'uppercase' }}
+                                        />
+                                        <Bar
+                                            dataKey="completed"
+                                            fill="url(#barGradient)"
+                                            radius={[8, 8, 8, 8]}
+                                            barSize={32}
+                                            animationDuration={1500}
+                                        />
                                     </BarChart>
                                 ) : (
-                                    <LineChart data={currentTab.data}>
-                                        <Line type="monotone" dataKey="completed" stroke={currentTab.color} strokeWidth={4} dot={{ r: 6 }} />
-                                        <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: 'var(--shadow-lg)' }} />
+                                    <LineChart data={currentTab.data} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
+                                        <defs>
+                                            <linearGradient id="lineFill" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="0%" stopColor={currentTab.color} stopOpacity={0.2} />
+                                                <stop offset="100%" stopColor={currentTab.color} stopOpacity={0} />
+                                            </linearGradient>
+                                        </defs>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                                        <XAxis
+                                            dataKey="name"
+                                            axisLine={false}
+                                            tickLine={false}
+                                            tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10, fontWeight: 700 }}
+                                            dy={10}
+                                        />
+                                        <YAxis hide domain={[0, 'auto']} />
+                                        <Tooltip
+                                            contentStyle={{
+                                                background: '#1a1a24',
+                                                border: '1px solid rgba(255,255,255,0.1)',
+                                                borderRadius: '16px',
+                                                boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+                                                padding: '12px 16px'
+                                            }}
+                                            itemStyle={{ color: '#fff', fontSize: '12px', fontWeight: 800 }}
+                                            labelStyle={{ color: 'rgba(255,255,255,0.5)', fontSize: '10px', marginBottom: '4px', textTransform: 'uppercase' }}
+                                        />
+                                        <Line
+                                            type="monotone"
+                                            dataKey="completed"
+                                            stroke={currentTab.color}
+                                            strokeWidth={4}
+                                            dot={{ r: 6, fill: currentTab.color, strokeWidth: 0 }}
+                                            activeDot={{ r: 8, strokeWidth: 0, shadow: '0 0 20px ' + currentTab.color }}
+                                            animationDuration={1500}
+                                        />
                                     </LineChart>
                                 )}
                             </ResponsiveContainer>

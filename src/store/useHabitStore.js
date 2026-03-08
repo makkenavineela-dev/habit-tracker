@@ -26,6 +26,12 @@ const useHabitStore = create(
             })),
 
             setWeeklyHabits: (habits) => set({ weeklyHabits: habits }),
+            resetWeeklyHabits: () => set((state) => ({
+                weeklyHabits: state.weeklyHabits.map(h => ({
+                    ...h,
+                    checks: Array.isArray(h.checks) ? Array(h.checks.length).fill(false) : 0
+                }))
+            })),
             setChallenges: (challenges) => set({ challenges }),
             setProblems: (problems) => set({ problems }),
             setPriorities: (priorities) => set({ priorities }),

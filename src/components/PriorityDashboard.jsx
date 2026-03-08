@@ -37,35 +37,7 @@ export default function PriorityDashboard({ globalProgress }) {
             animate="show"
             className="grid-container layout-2"
         >
-            <motion.div variants={item} className="card">
-                <h2 className="section-title">
-                    <TrendingUp size={20} />
-                    Performance
-                </h2>
-                <div className="stat-row" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem', textAlign: 'center' }}>
-                    <div
-                        className="stat-circle"
-                        style={{ "--progress": `${globalProgress}%`, width: '100px', height: '100px' }}
-                    >
-                        <motion.span
-                            initial={{ scale: 0.5, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            className="stat-value"
-                            style={{ fontSize: '1.5rem' }}
-                        >
-                            {globalProgress}%
-                        </motion.span>
-                    </div>
-                    <div>
-                        <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.25rem', color: 'var(--text-primary)', fontFamily: 'Outfit, sans-serif' }}>
-                            {globalProgress > 70 ? "Excellent!" : globalProgress > 40 ? "Steady Progress" : "Keep Moving"}
-                        </h3>
-                        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: 500, lineHeight: 1.4 }}>
-                            You're on track to hit your targets.
-                        </p>
-                    </div>
-                </div>
-            </motion.div>
+
 
             <motion.div variants={item} className="card priority-card" style={{ display: 'flex', flexDirection: 'column' }}>
                 <h2 className="section-title">
@@ -117,9 +89,9 @@ export default function PriorityDashboard({ globalProgress }) {
                     "Success is the sum of small efforts, repeated day in and day out."
                 </p>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', marginTop: '1.5rem' }}>
-                    <div style={{ height: '2px', width: '24px', background: 'var(--accent-sage-light)' }}></div>
+                    <div style={{ height: '2px', width: '24px', background: 'rgba(200, 245, 102, 0.2)' }}></div>
                     <span className="quote-author">Robert Collier</span>
-                    <div style={{ height: '2px', width: '24px', background: 'var(--accent-sage-light)' }}></div>
+                    <div style={{ height: '2px', width: '24px', background: 'rgba(200, 245, 102, 0.2)' }}></div>
                 </div>
             </motion.div>
         </motion.div>
