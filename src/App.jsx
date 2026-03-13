@@ -19,6 +19,7 @@ import { StatusBar, Style } from '@capacitor/status-bar';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { supabase } from './lib/supabase';
 import Auth from './components/Auth';
+import ChatBot from './components/ChatBot';
 import useHabitStore from './store/useHabitStore';
 import './App.css';
 
@@ -250,6 +251,7 @@ export default function App() {
         </AnimatePresence>
         <BottomNav activePath={location.pathname} navigate={navigate} />
         {isTimerOpen && <ZenTimer onClose={() => setIsTimerOpen(false)} />}
+        <ChatBot />
       </ErrorBoundary>
     </div>
   );
